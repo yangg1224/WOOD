@@ -1,0 +1,25 @@
+{
+  "permissions": {
+    "allow": [
+      "Read(//c/Users/WuYa1/.cache/puppeteer/**)",
+      "Read(//c/Users/WuYa1/AppData/Local/Temp/**)",
+      "Bash(node serve.mjs)",
+      "Bash(node screenshot.mjs http://localhost:3000)",
+      "Bash(node -e \"require.resolve\\('puppeteer'\\)\")",
+      "Bash(npm list:*)",
+      "Bash(npm install:*)",
+      "Bash(node -e \"const d=require\\('fs'\\).readFileSync\\('/dev/stdin','utf8'\\); const p=JSON.parse\\(d\\); console.log\\('main:', p.main, 'exports:', JSON.stringify\\(p.exports?.['.'],null,2\\)\\)\")",
+      "Bash(node -e \"const p=require\\('C:/Users/WuYa1/AppData/Local/Temp/puppeteer-test/node_modules/puppeteer-core/package.json'\\); console.log\\(p.main, p.exports?.['.']?.require\\)\")",
+      "Bash(node screenshot.mjs http://localhost:3000 round2)",
+      "Bash(curl -s -o /dev/null -w \"%{http_code}\" \"http://localhost:3000/reference/Products/Wooden%20Spoons/75.jpg\")",
+      "Bash(curl -s -o /dev/null -w \"%{http_code}\" \"http://localhost:3000/reference/Products/Wooden%20Mugs/57.jpg\")",
+      "Bash(node screenshot.mjs http://localhost:3000 before)",
+      "Bash(node screenshot.mjs http://localhost:3000 after)",
+      "Bash(node screenshot.mjs http://localhost:3000 collections2)",
+      "Bash(node screenshot.mjs http://localhost:3000 fix1)",
+      "Bash(node screenshot.mjs http://localhost:3000 fix2)",
+      "Bash(node -e ':*)",
+      "Bash(node screenshot.mjs http://localhost:3000 final)"
+    ]
+  }
+}

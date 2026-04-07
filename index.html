@@ -1,0 +1,757 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>Cobble — Handmade Wooden Goods</title>
+  <script src="https://cdn.tailwindcss.com"></script>
+  <script>
+    tailwind.config = {
+      theme: {
+        extend: {
+          colors: {
+            brand:  { DEFAULT: '#5B4545', dark: '#3D2E2E', light: '#7A5E5E' },
+            cream:  { DEFAULT: '#F7F2EB', dark: '#EDE6DB', deeper: '#DDD4C5' },
+            olive:  '#E3E0AC',
+          },
+          fontFamily: {
+            display: ['"Belanosima"', 'Georgia', 'serif'],
+            body:    ['"Inter"', 'system-ui', 'sans-serif'],
+          },
+          letterSpacing: {
+            tightest: '-0.04em',
+            tight:    '-0.02em',
+          },
+        }
+      }
+    }
+  </script>
+  <link rel="preconnect" href="https://fonts.googleapis.com" />
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+  <link href="https://fonts.googleapis.com/css2?family=Belanosima:wght@400;600;700&family=Inter:wght@300;400;500;600&display=swap" rel="stylesheet" />
+
+  <style>
+    :root {
+      --brand:      #5B4545;
+      --brand-dark: #3D2E2E;
+      --cream:      #F7F2EB;
+      --cream-dark: #EDE6DB;
+      --olive:      #E3E0AC;
+    }
+
+    *, *::before, *::after { box-sizing: border-box; }
+
+    body {
+      background: var(--cream);
+      color: var(--brand-dark);
+      font-family: 'Inter', system-ui, sans-serif;
+      font-size: 18px;
+      line-height: 1.7;
+      -webkit-font-smoothing: antialiased;
+    }
+
+    /* ── Noise texture ── */
+    .noise {
+      position: relative;
+    }
+    .noise::after {
+      content: '';
+      position: absolute;
+      inset: 0;
+      pointer-events: none;
+      background-image: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='300' height='300'%3E%3Cfilter id='n'%3E%3CfeTurbulence type='fractalNoise' baseFrequency='0.75' numOctaves='4' stitchTiles='stitch'/%3E%3C/filter%3E%3Crect width='300' height='300' filter='url(%23n)' opacity='0.035'/%3E%3C/svg%3E");
+      background-repeat: repeat;
+      mix-blend-mode: multiply;
+    }
+
+    /* ── Layered card shadow ── */
+    .card-shadow {
+      box-shadow:
+        0 1px 2px  rgba(91,69,69,.04),
+        0 4px 12px rgba(91,69,69,.07),
+        0 16px 40px rgba(91,69,69,.07);
+    }
+
+    /* ── Spring hover ── */
+    .spring {
+      transition: transform .32s cubic-bezier(.34,1.56,.64,1), opacity .25s ease;
+    }
+    .spring:hover { transform: translateY(-5px); }
+
+    /* ── Scrollbar hide ── */
+    .no-scroll::-webkit-scrollbar { display: none; }
+    .no-scroll { -ms-overflow-style: none; scrollbar-width: none; }
+
+    /* ── Btn states ── */
+    .btn-primary {
+      display: inline-block;
+      background: var(--brand);
+      color: var(--cream);
+      font-family: 'Belanosima', serif;
+      font-weight: 600;
+      letter-spacing: .04em;
+      border-radius: 2px;
+      transition: background .2s ease, transform .15s ease, box-shadow .2s ease;
+      box-shadow: 0 2px 8px rgba(91,69,69,.25), 0 1px 2px rgba(91,69,69,.15);
+    }
+    .btn-primary:hover {
+      background: var(--brand-dark);
+      transform: translateY(-1px);
+      box-shadow: 0 4px 16px rgba(91,69,69,.3), 0 2px 4px rgba(91,69,69,.2);
+    }
+    .btn-primary:active {
+      transform: translateY(0);
+      box-shadow: 0 1px 4px rgba(91,69,69,.2);
+    }
+    .btn-primary:focus-visible {
+      outline: 2px solid var(--olive);
+      outline-offset: 3px;
+    }
+
+    .btn-outline {
+      display: inline-block;
+      border: 1.5px solid var(--brand);
+      color: var(--brand);
+      font-family: 'Belanosima', serif;
+      font-weight: 600;
+      letter-spacing: .04em;
+      border-radius: 2px;
+      transition: background .2s ease, color .2s ease, transform .15s ease;
+    }
+    .btn-outline:hover { background: var(--brand); color: var(--cream); transform: translateY(-1px); }
+    .btn-outline:active { transform: translateY(0); }
+    .btn-outline:focus-visible { outline: 2px solid var(--brand); outline-offset: 3px; }
+
+    /* ── Product card ── */
+    .product-card {
+      background: white;
+      border-radius: 4px;
+      overflow: hidden;
+      cursor: pointer;
+    }
+    .product-card .img-wrap {
+      position: relative;
+      overflow: hidden;
+    }
+    .product-card .img-wrap img {
+      width: 100%;
+      height: 280px;
+      object-fit: cover;
+      transition: transform .5s cubic-bezier(.25,.46,.45,.94);
+    }
+    .product-card:hover .img-wrap img { transform: scale(1.04); }
+    .product-card .img-wrap::after {
+      content: '';
+      position: absolute;
+      inset: 0;
+      background: linear-gradient(to top, rgba(61,46,46,.45) 0%, transparent 55%);
+      pointer-events: none;
+    }
+
+    /* ── Category card ── */
+    .cat-card {
+      position: relative;
+      border-radius: 4px;
+      overflow: hidden;
+      cursor: pointer;
+    }
+    .cat-card img {
+      width: 100%;
+      height: 380px;
+      object-fit: cover;
+      transition: transform .5s cubic-bezier(.25,.46,.45,.94);
+    }
+    .cat-card:hover img { transform: scale(1.05); }
+    .cat-card .overlay {
+      position: absolute;
+      inset: 0;
+      background:
+        linear-gradient(to top, rgba(61,46,46,.75) 0%, rgba(61,46,46,.1) 60%, transparent 100%);
+    }
+    .cat-card:focus-visible {
+      outline: 2px solid var(--olive);
+      outline-offset: 2px;
+    }
+
+    /* ── Scroll arrows ── */
+    .arrow-btn {
+      width: 40px;
+      height: 40px;
+      border-radius: 50%;
+      background: white;
+      border: 1.5px solid var(--cream-dark);
+      display: flex; align-items: center; justify-content: center;
+      cursor: pointer;
+      transition: background .2s, border-color .2s, transform .2s cubic-bezier(.34,1.56,.64,1);
+      box-shadow: 0 2px 8px rgba(91,69,69,.1);
+    }
+    .arrow-btn:hover { background: var(--brand); border-color: var(--brand); transform: scale(1.08); }
+    .arrow-btn:hover svg { color: var(--cream); }
+    .arrow-btn:active { transform: scale(.96); }
+    .arrow-btn:focus-visible { outline: 2px solid var(--brand); outline-offset: 2px; }
+    .arrow-btn svg { color: var(--brand); transition: color .2s; }
+
+    /* ── Star rating ── */
+    .stars { color: var(--olive); filter: brightness(.85) saturate(1.3); }
+
+    /* ── Nav ── */
+    nav a {
+      position: relative;
+      transition: color .2s;
+    }
+    nav a::after {
+      content: '';
+      position: absolute;
+      bottom: -2px; left: 0;
+      width: 0; height: 1.5px;
+      background: var(--brand);
+      transition: width .25s ease;
+    }
+    nav a:hover::after { width: 100%; }
+    nav a:focus-visible { outline: 2px solid var(--olive); border-radius: 2px; }
+
+    /* ── Testimonial card ── */
+    .review-card {
+      background: white;
+      border-radius: 4px;
+      box-shadow: 0 2px 8px rgba(91,69,69,.06), 0 8px 24px rgba(91,69,69,.06);
+      transition: transform .3s cubic-bezier(.34,1.56,.64,1), box-shadow .3s ease;
+    }
+    .review-card:hover {
+      transform: translateY(-4px);
+      box-shadow: 0 4px 16px rgba(91,69,69,.1), 0 16px 40px rgba(91,69,69,.1);
+    }
+
+    /* ── Newsletter input ── */
+    .newsletter-input {
+      background: rgba(255,255,255,.15);
+      border: 1px solid rgba(247,242,235,.4);
+      color: var(--cream);
+      border-radius: 2px;
+      transition: background .2s, border-color .2s;
+    }
+    .newsletter-input::placeholder { color: rgba(247,242,235,.5); }
+    .newsletter-input:focus {
+      outline: none;
+      background: rgba(255,255,255,.22);
+      border-color: var(--olive);
+    }
+
+    /* ── Frosted nav ── */
+    header {
+      background: rgba(247, 242, 235, 0.88) !important;
+      backdrop-filter: blur(12px);
+      -webkit-backdrop-filter: blur(12px);
+    }
+
+    /* ── Collection hero card ── */
+    .cat-hero { min-height: 600px; }
+    .cat-card { position: relative; }
+
+    /* ── Product card overrides ── */
+    .product-card {
+      background: var(--cream);
+      border-radius: 0;
+    }
+    .product-card .img-wrap img {
+      height: 320px;
+    }
+    .product-card .img-wrap::after { display: none; }
+
+    /* ── Section hairline rule ── */
+    .section-rule { height: 1px; background: #DDD4C5; }
+  </style>
+</head>
+<body>
+
+<!-- ═══════════════════════════════════════════
+     NAV
+═══════════════════════════════════════════ -->
+<header class="sticky top-0 z-50 bg-cream border-b border-cream-deeper" style="border-color: #DDD4C5;">
+  <div class="max-w-7xl mx-auto px-6 flex items-center justify-between h-16">
+
+    <!-- Logo -->
+    <a href="/" class="flex-shrink-0 focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-olive rounded">
+      <img src="reference/brand_assets/cobble-logo-transparent.png" alt="Cobble" class="h-10 w-auto" />
+    </a>
+
+    <!-- Nav links -->
+    <nav class="hidden md:flex items-center gap-8 font-body text-sm font-medium tracking-wide" style="color: #5B4545;">
+      <a href="#shop" class="hover:text-brand-dark">Shop</a>
+      <a href="#collections" class="hover:text-brand-dark">Collections</a>
+      <a href="#about" class="hover:text-brand-dark">Our Craft</a>
+      <a href="#" class="hover:text-brand-dark">Gift Cards</a>
+    </nav>
+
+    <!-- Right icons -->
+    <div class="flex items-center gap-4">
+      <button aria-label="Search" class="p-2 rounded hover:bg-cream-dark transition-colors focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-brand" style="transition: background .2s;">
+        <svg width="20" height="20" fill="none" stroke="#5B4545" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round" viewBox="0 0 24 24"><circle cx="11" cy="11" r="8"/><line x1="21" y1="21" x2="16.65" y2="16.65"/></svg>
+      </button>
+      <button aria-label="Cart" class="relative p-2 rounded hover:bg-cream-dark transition-colors focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-brand">
+        <svg width="20" height="20" fill="none" stroke="#5B4545" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round" viewBox="0 0 24 24"><path d="M6 2L3 6v14a2 2 0 002 2h14a2 2 0 002-2V6l-3-4z"/><line x1="3" y1="6" x2="21" y2="6"/><path d="M16 10a4 4 0 01-8 0"/></svg>
+        <span class="absolute top-1 right-1 w-4 h-4 rounded-full text-xs font-semibold flex items-center justify-center" style="background: #5B4545; color: #F7F2EB; font-family: Inter; font-size: 10px; line-height: 1;">2</span>
+      </button>
+    </div>
+  </div>
+</header>
+
+
+<!-- ═══════════════════════════════════════════
+     HERO
+═══════════════════════════════════════════ -->
+<section class="noise relative overflow-hidden" style="min-height: 92vh;">
+
+  <!-- Full-bleed background image -->
+  <div class="absolute inset-0">
+    <img
+      src="reference/Products/Wooden Mugs/66.jpg"
+      alt=""
+      aria-hidden="true"
+      class="w-full h-full object-cover object-center"
+      style="filter: brightness(0.72) saturate(0.9);"
+    />
+  </div>
+
+  <!-- Multi-layer dark overlay -->
+  <div class="absolute inset-0" style="
+    background:
+      linear-gradient(to bottom, rgba(30,20,20,.5) 0%, transparent 40%, rgba(30,20,20,.65) 100%),
+      linear-gradient(to right, rgba(30,20,20,.4) 0%, transparent 65%);
+  "></div>
+
+  <!-- Content -->
+  <div class="relative z-10 max-w-7xl mx-auto px-8 md:px-16 flex flex-col justify-center" style="min-height: 92vh; padding-top: 80px; padding-bottom: 80px;">
+    <span class="inline-block mb-5 text-xs font-semibold tracking-widest uppercase font-body" style="color: #E3E0AC; letter-spacing: .18em;">Handmade in Canada</span>
+    <h1 class="font-display font-bold leading-none mb-8" style="font-size: clamp(52px,7.5vw,100px); color: #F7F2EB; letter-spacing: -0.04em; max-width: 700px;">
+      Art made to live<br/>on your table,<br/>not your shelf.
+    </h1>
+    <a href="#shop" class="btn-primary px-7 py-3" style="font-size: 14px; letter-spacing: .08em; width: fit-content;">
+      Shop the Collection
+    </a>
+  </div>
+</section>
+
+
+<!-- ═══════════════════════════════════════════
+     BEST SELLERS STRIP
+═══════════════════════════════════════════ -->
+<section id="shop" class="pt-20 pb-16 max-w-7xl mx-auto px-6">
+  <div class="flex items-end justify-between mb-8">
+    <div>
+      <p class="text-xs font-semibold tracking-widest uppercase font-body mb-1" style="color: #7A5E5E; letter-spacing: .16em;">New in</p>
+      <h2 class="font-display font-bold" style="font-size: clamp(32px, 3.5vw, 48px); color: #3D2E2E; letter-spacing: -0.03em;">Best Sellers</h2>
+    </div>
+    <div class="flex gap-2">
+      <button id="prev-bs" class="arrow-btn" aria-label="Previous">
+        <svg width="16" height="16" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" viewBox="0 0 24 24"><polyline points="15 18 9 12 15 6"/></svg>
+      </button>
+      <button id="next-bs" class="arrow-btn" aria-label="Next">
+        <svg width="16" height="16" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" viewBox="0 0 24 24"><polyline points="9 18 15 12 9 6"/></svg>
+      </button>
+    </div>
+  </div>
+
+  <div id="bs-track" class="flex gap-5 no-scroll overflow-x-auto pb-2" style="scroll-behavior: smooth;">
+
+    <div class="product-card flex-none cursor-pointer" style="width: 300px;">
+      <div class="img-wrap"><img src="reference/Products/Wooden Mugs/52.jpg" alt="Walnut Mug" loading="lazy" /></div>
+      <div class="pt-3 pb-5 px-1">
+        <div class="flex items-baseline justify-between gap-2">
+          <h3 class="font-display font-semibold" style="font-size: 16px; color: #3D2E2E; letter-spacing: -0.01em;">Walnut Turned Mug</h3>
+          <span class="font-body font-medium flex-shrink-0" style="font-size: 15px; color: #7A5E5E;">$68</span>
+        </div>
+      </div>
+    </div>
+
+    <div class="product-card flex-none cursor-pointer" style="width: 300px;">
+      <div class="img-wrap"><img src="reference/Products/Wooden Mugs/53.jpg" alt="Maple Mug" loading="lazy" /></div>
+      <div class="pt-3 pb-5 px-1">
+        <div class="flex items-baseline justify-between gap-2">
+          <h3 class="font-display font-semibold" style="font-size: 16px; color: #3D2E2E; letter-spacing: -0.01em;">Maple Grain Mug</h3>
+          <span class="font-body font-medium flex-shrink-0" style="font-size: 15px; color: #7A5E5E;">$72</span>
+        </div>
+      </div>
+    </div>
+
+    <div class="product-card flex-none cursor-pointer" style="width: 300px;">
+      <div class="img-wrap"><img src="reference/Products/Wooden Spoons/71.jpg" alt="Carved Spoon Set" loading="lazy" /></div>
+      <div class="pt-3 pb-5 px-1">
+        <div class="flex items-baseline justify-between gap-2">
+          <h3 class="font-display font-semibold" style="font-size: 16px; color: #3D2E2E; letter-spacing: -0.01em;">Carved Spoon Set</h3>
+          <span class="font-body font-medium flex-shrink-0" style="font-size: 15px; color: #7A5E5E;">$44</span>
+        </div>
+      </div>
+    </div>
+
+    <div class="product-card flex-none cursor-pointer" style="width: 300px;">
+      <div class="img-wrap"><img src="reference/Products/Wooden Mugs/54.jpg" alt="Oak Mug" loading="lazy" /></div>
+      <div class="pt-3 pb-5 px-1">
+        <div class="flex items-baseline justify-between gap-2">
+          <h3 class="font-display font-semibold" style="font-size: 16px; color: #3D2E2E; letter-spacing: -0.01em;">Rustic Oak Mug</h3>
+          <span class="font-body font-medium flex-shrink-0" style="font-size: 15px; color: #7A5E5E;">$64</span>
+        </div>
+      </div>
+    </div>
+
+    <div class="product-card flex-none cursor-pointer" style="width: 300px;">
+      <div class="img-wrap"><img src="reference/Products/Wooden Spoons/72.jpg" alt="Serving Spoon" loading="lazy" /></div>
+      <div class="pt-3 pb-5 px-1">
+        <div class="flex items-baseline justify-between gap-2">
+          <h3 class="font-display font-semibold" style="font-size: 16px; color: #3D2E2E; letter-spacing: -0.01em;">Serving Spoon — Walnut</h3>
+          <span class="font-body font-medium flex-shrink-0" style="font-size: 15px; color: #7A5E5E;">$38</span>
+        </div>
+      </div>
+    </div>
+
+    <div class="product-card flex-none cursor-pointer" style="width: 300px;">
+      <div class="img-wrap"><img src="reference/Products/Wooden Mugs/55.jpg" alt="Cherry Mug" loading="lazy" /></div>
+      <div class="pt-3 pb-5 px-1">
+        <div class="flex items-baseline justify-between gap-2">
+          <h3 class="font-display font-semibold" style="font-size: 16px; color: #3D2E2E; letter-spacing: -0.01em;">Cherry Wood Mug</h3>
+          <span class="font-body font-medium flex-shrink-0" style="font-size: 15px; color: #7A5E5E;">$75</span>
+        </div>
+      </div>
+    </div>
+
+  </div>
+</section>
+
+
+<!-- ═══════════════════════════════════════════
+     MID BANNER — BRAND STATEMENT
+═══════════════════════════════════════════ -->
+<section class="noise relative overflow-hidden" id="about" style="min-height: 580px;">
+
+  <!-- Full-bleed lifestyle photo -->
+  <div class="absolute inset-0">
+    <img
+      src="reference/Products/Wooden Trays/148.jpg"
+      alt=""
+      aria-hidden="true"
+      class="w-full h-full object-cover object-center"
+      style="filter: brightness(0.5) saturate(0.85);"
+    />
+  </div>
+
+  <!-- Dark overlay for legibility -->
+  <div class="absolute inset-0 pointer-events-none" style="
+    background:
+      radial-gradient(ellipse 90% 90% at 50% 50%, rgba(30,20,20,.5) 0%, rgba(30,20,20,.15) 100%),
+      linear-gradient(to bottom, rgba(30,20,20,.35) 0%, transparent 30%, rgba(30,20,20,.45) 100%);
+  "></div>
+
+  <div class="relative z-10 max-w-4xl mx-auto px-6 text-center flex flex-col justify-center" style="min-height: 580px; padding-top: 80px; padding-bottom: 80px;">
+    <p class="text-xs font-semibold tracking-widest uppercase font-body mb-6" style="color: rgba(227,224,172,.9); letter-spacing: .2em;">Our Craft</p>
+    <h2 class="font-display font-bold mb-8" style="font-size: clamp(36px, 5.5vw, 72px); color: #FFFFFF; letter-spacing: -0.03em; line-height: 1.05;">
+      Made for your home,<br />inspired by the forest.
+    </h2>
+    <p class="font-body font-light max-w-2xl mx-auto mb-10" style="color: rgba(247,242,235,.75); font-size: 18px; line-height: 1.8;">
+      Every Cobble piece starts with sustainably sourced hardwood. We shape it slowly — on the lathe, by hand, with carving tools — until it becomes something you'll reach for every day.
+    </p>
+    <a href="#collections" class="btn-primary px-8 py-4" style="background: var(--olive); color: #3D2E2E; font-size: 15px; letter-spacing: .06em; margin: 0 auto; width: fit-content;">
+      Explore Our Story
+    </a>
+  </div>
+</section>
+
+
+<!-- ═══════════════════════════════════════════
+     SHOP BY COLLECTION
+═══════════════════════════════════════════ -->
+<section id="collections" class="pt-24 pb-16 max-w-7xl mx-auto px-6">
+  <div class="mb-10">
+    <p class="text-xs font-semibold tracking-widest uppercase font-body mb-1" style="color: #7A5E5E; letter-spacing: .16em;">Browse</p>
+    <h2 class="font-display font-bold" style="font-size: clamp(32px, 3.5vw, 48px); color: #3D2E2E; letter-spacing: -0.03em;">Shop by Collection</h2>
+  </div>
+
+  <!-- Asymmetric grid: 3-col dominant left + 2-col stacked right -->
+  <div class="grid grid-cols-1 md:grid-cols-5 gap-3" style="min-height: 600px;">
+
+    <!-- Dominant card — Mugs (spans 3 cols) -->
+    <a href="#" class="cat-card cat-hero card-shadow focus-visible:outline-none md:col-span-3" tabindex="0" aria-label="Shop Wooden Mugs">
+      <img src="reference/Products/Wooden Mugs/66.jpg" alt="Wooden Mugs collection" loading="lazy" class="absolute inset-0 w-full h-full object-cover" style="filter: brightness(0.65) saturate(0.85);" />
+      <div class="absolute inset-0" style="background: rgba(20,14,14,0.25);"></div>
+      <div class="absolute inset-0" style="background: linear-gradient(to top, rgba(20,14,14,.9) 0%, rgba(20,14,14,.1) 50%, transparent 100%);"></div>
+      <div class="absolute bottom-0 left-0 right-0 p-8">
+        <p class="font-display font-bold text-white" style="font-size: clamp(36px,4vw,56px); letter-spacing: -0.02em; line-height: 1;">Mugs</p>
+        <p class="text-white font-body mt-2" style="opacity: .7; font-size: 13px; letter-spacing: .12em; text-transform: uppercase;">17 products — Shop now →</p>
+      </div>
+    </a>
+
+    <!-- Right column: two stacked cards -->
+    <div class="md:col-span-2 flex flex-col gap-3" style="height: 600px;">
+
+      <a href="#" class="cat-card card-shadow focus-visible:outline-none" tabindex="0" aria-label="Shop Wooden Spoons" style="height: 294px; flex-shrink: 0;">
+        <img src="reference/Products/Wooden Mugs/61.jpg" alt="Wooden Spoons collection" loading="lazy" class="absolute inset-0 w-full h-full object-cover" />
+        <div class="absolute inset-0" style="background: linear-gradient(to top, rgba(30,20,20,.85) 0%, rgba(30,20,20,.2) 60%, transparent 100%);"></div>
+        <div class="absolute bottom-0 left-0 right-0 p-6">
+          <p class="font-display font-bold text-white" style="font-size: 28px; letter-spacing: -0.01em; line-height: 1;">Spoons</p>
+          <p class="text-white font-body mt-1" style="opacity: .65; font-size: 12px; text-transform: uppercase; letter-spacing: .12em;">8 products</p>
+        </div>
+      </a>
+
+      <a href="#" class="cat-card card-shadow focus-visible:outline-none" tabindex="0" aria-label="Shop Wooden Art" style="height: 294px; flex-shrink: 0;">
+        <img src="reference/Products/Wooden Mugs/63.jpg" alt="Wooden Art collection" loading="lazy" class="absolute inset-0 w-full h-full object-cover" />
+        <div class="absolute inset-0" style="background: linear-gradient(to top, rgba(30,20,20,.85) 0%, rgba(30,20,20,.2) 60%, transparent 100%);"></div>
+        <div class="absolute bottom-0 left-0 right-0 p-6">
+          <p class="font-display font-bold text-white" style="font-size: 28px; letter-spacing: -0.01em; line-height: 1;">Art Pieces</p>
+          <p class="text-white font-body mt-1" style="opacity: .65; font-size: 12px; text-transform: uppercase; letter-spacing: .12em;">1 product</p>
+        </div>
+      </a>
+
+    </div>
+
+  </div>
+</section>
+
+
+<!-- ═══════════════════════════════════════════
+     FEATURED PRODUCT — FULL WIDTH
+═══════════════════════════════════════════ -->
+<section class="relative overflow-hidden" style="min-height: 580px;">
+
+  <!-- Full-bleed background -->
+  <div class="absolute inset-0">
+    <img src="reference/Products/Wooden Trays/149.jpg" alt="" aria-hidden="true" class="w-full h-full object-cover object-center" style="filter: brightness(0.55) saturate(0.9);" />
+  </div>
+
+  <!-- Overlay -->
+  <div class="absolute inset-0" style="background: linear-gradient(to right, rgba(20,14,14,.65) 0%, rgba(20,14,14,.2) 60%, transparent 100%), linear-gradient(to bottom, rgba(20,14,14,.3) 0%, transparent 50%, rgba(20,14,14,.4) 100%);"></div>
+
+  <!-- Content -->
+  <div class="relative z-10 max-w-7xl mx-auto px-8 md:px-16 flex items-center" style="min-height: 580px; padding-top: 80px; padding-bottom: 80px;">
+    <div style="max-width: 520px;">
+      <p class="text-xs font-semibold tracking-widest uppercase font-body mb-5" style="color: rgba(227,224,172,.85); letter-spacing: .18em;">Featured Collection</p>
+      <h2 class="font-display font-bold mb-6" style="font-size: clamp(36px,4.5vw,62px); color: #FFFFFF; letter-spacing: -0.03em; line-height: 1.05;">The Spoon<br/>Carving Collection</h2>
+      <p class="font-body font-light mb-8" style="color: rgba(247,242,235,.75); font-size: 17px; line-height: 1.75;">
+        Hand-carved from single pieces of hardwood. Each curve is shaped with a hook knife — no two spoons are the same grain, the same weight, the same story.
+      </p>
+      <div class="flex items-center gap-4">
+        <a href="#" class="btn-primary px-7 py-3.5" style="font-size: 14px;">Shop Spoons</a>
+        <a href="#" style="color: rgba(247,242,235,.8); font-family: 'Belanosima', serif; font-size: 14px; font-weight: 600; letter-spacing: .04em; border-bottom: 1px solid rgba(247,242,235,.4); padding-bottom: 2px; transition: color .2s, border-color .2s;">Learn More</a>
+      </div>
+    </div>
+  </div>
+</section>
+
+
+<!-- ═══════════════════════════════════════════
+     SECOND PRODUCT STRIP
+═══════════════════════════════════════════ -->
+<div class="section-rule max-w-7xl mx-auto" style="margin-left: 24px; margin-right: 24px;"></div>
+<section class="pt-6 pb-24 max-w-7xl mx-auto px-6">
+  <div class="flex items-end justify-between mb-8">
+    <div>
+      <p class="text-xs font-semibold tracking-widest uppercase font-body mb-1" style="color: #7A5E5E; letter-spacing: .16em;">More</p>
+      <h2 class="font-display font-bold" style="font-size: clamp(32px, 3.5vw, 48px); color: #3D2E2E; letter-spacing: -0.03em;">You Might Like</h2>
+    </div>
+    <a href="#" class="btn-outline px-5 py-2.5" style="font-size: 13px;">View All</a>
+  </div>
+
+  <div class="grid grid-cols-2 md:grid-cols-4 gap-5">
+
+    <div class="product-card cursor-pointer">
+      <div class="img-wrap"><img src="reference/Products/Wooden Mugs/57.jpg" alt="Birch Mug" loading="lazy" style="height: 280px;" /></div>
+      <div class="pt-3 pb-5 px-1">
+        <div class="flex items-baseline justify-between gap-2">
+          <h3 class="font-display font-semibold" style="font-size: 16px; color: #3D2E2E; letter-spacing: -0.01em;">Birch Mug</h3>
+          <span class="font-body font-medium flex-shrink-0" style="font-size: 15px; color: #7A5E5E;">$59</span>
+        </div>
+      </div>
+    </div>
+
+    <div class="product-card cursor-pointer">
+      <div class="img-wrap"><img src="reference/Products/Wooden Spoons/75.jpg" alt="Deep Ladle" loading="lazy" style="height: 280px;" /></div>
+      <div class="pt-3 pb-5 px-1">
+        <div class="flex items-baseline justify-between gap-2">
+          <h3 class="font-display font-semibold" style="font-size: 16px; color: #3D2E2E; letter-spacing: -0.01em;">Deep Ladle</h3>
+          <span class="font-body font-medium flex-shrink-0" style="font-size: 15px; color: #7A5E5E;">$52</span>
+        </div>
+      </div>
+    </div>
+
+    <div class="product-card cursor-pointer">
+      <div class="img-wrap"><img src="reference/Products/Wooden Mugs/58.jpg" alt="Ebony Mug" loading="lazy" style="height: 280px;" /></div>
+      <div class="pt-3 pb-5 px-1">
+        <div class="flex items-baseline justify-between gap-2">
+          <h3 class="font-display font-semibold" style="font-size: 16px; color: #3D2E2E; letter-spacing: -0.01em;">Ebony Mug</h3>
+          <span class="font-body font-medium flex-shrink-0" style="font-size: 15px; color: #7A5E5E;">$82</span>
+        </div>
+      </div>
+    </div>
+
+    <div class="product-card cursor-pointer">
+      <div class="img-wrap"><img src="reference/Products/Wooden Spoons/76.jpg" alt="Butter Spreader" loading="lazy" style="height: 280px;" /></div>
+      <div class="pt-3 pb-5 px-1">
+        <div class="flex items-baseline justify-between gap-2">
+          <h3 class="font-display font-semibold" style="font-size: 16px; color: #3D2E2E; letter-spacing: -0.01em;">Butter Spreader</h3>
+          <span class="font-body font-medium flex-shrink-0" style="font-size: 15px; color: #7A5E5E;">$29</span>
+        </div>
+      </div>
+    </div>
+
+  </div>
+</section>
+
+
+<!-- ═══════════════════════════════════════════
+     TESTIMONIALS
+═══════════════════════════════════════════ -->
+<section class="py-24" style="background: #EDE6DB;">
+  <div class="max-w-7xl mx-auto px-6">
+    <div class="text-center mb-12">
+      <p class="text-xs font-semibold tracking-widest uppercase font-body mb-2" style="color: #7A5E5E; letter-spacing: .16em;">Reviews</p>
+      <h2 class="font-display font-bold" style="font-size: clamp(32px, 3.5vw, 48px); color: #3D2E2E; letter-spacing: -0.03em;">Don't take our word for it</h2>
+    </div>
+
+    <div class="grid md:grid-cols-3 gap-6">
+
+      <div class="review-card p-7">
+        <div class="stars text-xl mb-4">★★★★★</div>
+        <p class="font-body mb-5" style="color: #5B4545; font-size: 16px; line-height: 1.75;">
+          "My walnut mug is the most beautiful thing in my kitchen. I get compliments every time someone comes over. Worth every cent."
+        </p>
+        <div class="flex items-center gap-3">
+          <div class="w-10 h-10 rounded-full flex items-center justify-center font-display font-bold text-sm" style="background: #5B4545; color: #F7F2EB;">S</div>
+          <div>
+            <p class="font-semibold font-body text-sm" style="color: #3D2E2E;">Sarah M.</p>
+            <p class="text-xs font-body" style="color: #7A5E5E;">Vancouver, BC</p>
+          </div>
+        </div>
+      </div>
+
+      <div class="review-card p-7">
+        <div class="stars text-xl mb-4">★★★★★</div>
+        <p class="font-body mb-5" style="color: #5B4545; font-size: 16px; line-height: 1.75;">
+          "Bought three spoon sets as Christmas gifts. Everyone was blown away. The packaging was beautiful and they arrived perfectly wrapped."
+        </p>
+        <div class="flex items-center gap-3">
+          <div class="w-10 h-10 rounded-full flex items-center justify-center font-display font-bold text-sm" style="background: #5B4545; color: #F7F2EB;">J</div>
+          <div>
+            <p class="font-semibold font-body text-sm" style="color: #3D2E2E;">James T.</p>
+            <p class="text-xs font-body" style="color: #7A5E5E;">Toronto, ON</p>
+          </div>
+        </div>
+      </div>
+
+      <div class="review-card p-7">
+        <div class="stars text-xl mb-4">★★★★★</div>
+        <p class="font-body mb-5" style="color: #5B4545; font-size: 16px; line-height: 1.75;">
+          "I ordered a custom piece and the team was so responsive. They nailed exactly what I had in mind. Will absolutely order again."
+        </p>
+        <div class="flex items-center gap-3">
+          <div class="w-10 h-10 rounded-full flex items-center justify-center font-display font-bold text-sm" style="background: #5B4545; color: #F7F2EB;">A</div>
+          <div>
+            <p class="font-semibold font-body text-sm" style="color: #3D2E2E;">Anika R.</p>
+            <p class="text-xs font-body" style="color: #7A5E5E;">Calgary, AB</p>
+          </div>
+        </div>
+      </div>
+
+    </div>
+  </div>
+</section>
+
+
+<!-- ═══════════════════════════════════════════
+     NEWSLETTER
+═══════════════════════════════════════════ -->
+<section class="noise relative overflow-hidden py-20" style="background: #3D2E2E;">
+  <div class="absolute inset-0 pointer-events-none" style="background: radial-gradient(ellipse 80% 120% at 50% 50%, rgba(91,69,69,.6) 0%, transparent 70%);"></div>
+  <div class="relative z-10 max-w-2xl mx-auto px-6 text-center">
+    <p class="text-xs font-semibold tracking-widest uppercase font-body mb-4" style="color: rgba(227,224,172,.8); letter-spacing: .2em;">Stay in the loop</p>
+    <h2 class="font-display font-bold mb-4" style="font-size: clamp(28px,4vw,48px); color: #F7F2EB; letter-spacing: -0.02em;">New pieces, first.</h2>
+    <p class="font-body font-light mb-8" style="color: rgba(247,242,235,.6); font-size: 16px;">
+      Join our list for early access to new collections, behind-the-scenes craft content, and occasional discounts.
+    </p>
+    <form class="flex flex-col sm:flex-row gap-3 max-w-md mx-auto" onsubmit="return false;">
+      <input
+        type="email"
+        placeholder="your@email.com"
+        class="newsletter-input flex-1 px-5 py-3.5 font-body text-sm"
+        aria-label="Email address"
+      />
+      <button type="submit" class="btn-primary px-6 py-3.5" style="background: #E3E0AC; color: #3D2E2E; font-size: 14px; white-space: nowrap;">
+        Subscribe
+      </button>
+    </form>
+  </div>
+</section>
+
+
+<!-- ═══════════════════════════════════════════
+     FOOTER
+═══════════════════════════════════════════ -->
+<footer style="background: #3D2E2E; color: rgba(247,242,235,.6);">
+  <div class="max-w-7xl mx-auto px-6 pt-16 pb-8">
+
+    <!-- Top footer grid -->
+    <div class="grid grid-cols-2 md:grid-cols-4 gap-8 mb-16">
+
+      <div>
+        <img src="reference/brand_assets/cobble-logo-transparent.png" alt="Cobble" class="h-8 mb-4" style="filter: invert(1) brightness(0.8);" />
+        <p class="text-sm font-body leading-relaxed" style="color: rgba(247,242,235,.5); max-width: 180px;">
+          Handmade wooden goods, crafted with care in Canada.
+        </p>
+      </div>
+
+      <div>
+        <p class="font-display font-semibold mb-4 text-sm tracking-wider uppercase" style="color: rgba(247,242,235,.8); letter-spacing: .1em;">Shop</p>
+        <ul class="space-y-2 text-sm font-body">
+          <li><a href="#" class="hover:text-cream transition-colors focus-visible:text-cream">Mugs</a></li>
+          <li><a href="#" class="hover:text-cream transition-colors focus-visible:text-cream">Spoons</a></li>
+          <li><a href="#" class="hover:text-cream transition-colors focus-visible:text-cream">Trays</a></li>
+          <li><a href="#" class="hover:text-cream transition-colors focus-visible:text-cream">Art Pieces</a></li>
+          <li><a href="#" class="hover:text-cream transition-colors focus-visible:text-cream">Gift Cards</a></li>
+        </ul>
+      </div>
+
+      <div>
+        <p class="font-display font-semibold mb-4 text-sm tracking-wider uppercase" style="color: rgba(247,242,235,.8); letter-spacing: .1em;">Info</p>
+        <ul class="space-y-2 text-sm font-body">
+          <li><a href="#" class="hover:text-cream transition-colors">Our Craft</a></li>
+          <li><a href="#" class="hover:text-cream transition-colors">Sustainability</a></li>
+          <li><a href="#" class="hover:text-cream transition-colors">Shipping &amp; Returns</a></li>
+          <li><a href="#" class="hover:text-cream transition-colors">Custom Orders</a></li>
+          <li><a href="#" class="hover:text-cream transition-colors">FAQ</a></li>
+        </ul>
+      </div>
+
+      <div>
+        <p class="font-display font-semibold mb-4 text-sm tracking-wider uppercase" style="color: rgba(247,242,235,.8); letter-spacing: .1em;">Contact</p>
+        <ul class="space-y-2 text-sm font-body">
+          <li><a href="mailto:hello@cobblewood.ca" class="hover:text-cream transition-colors">hello@cobblewood.ca</a></li>
+          <li><a href="#" class="hover:text-cream transition-colors">Instagram</a></li>
+          <li><a href="#" class="hover:text-cream transition-colors">Pinterest</a></li>
+        </ul>
+      </div>
+
+    </div>
+
+    <!-- Big brand name -->
+    <div class="border-t pt-8 flex flex-col md:flex-row items-center justify-between gap-4" style="border-color: rgba(247,242,235,.08);">
+      <p class="text-xs font-body" style="color: rgba(247,242,235,.3);">© 2026 Cobble. All rights reserved.</p>
+      <p class="font-display font-bold tracking-tightest select-none" style="font-size: clamp(40px,8vw,100px); color: rgba(247,242,235,.06); letter-spacing: -0.04em; line-height: 1;">COBBLE</p>
+      <p class="text-xs font-body" style="color: rgba(247,242,235,.3);">Made in Canada</p>
+    </div>
+
+  </div>
+</footer>
+
+
+<!-- ═══════════════════════════════════════════
+     JS — Scroll arrows
+═══════════════════════════════════════════ -->
+<script>
+  const track = document.getElementById('bs-track');
+  document.getElementById('prev-bs').addEventListener('click', () => {
+    track.scrollBy({ left: -300, behavior: 'smooth' });
+  });
+  document.getElementById('next-bs').addEventListener('click', () => {
+    track.scrollBy({ left: 300, behavior: 'smooth' });
+  });
+</script>
+
+</body>
+</html>
