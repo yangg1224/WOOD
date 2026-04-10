@@ -258,9 +258,85 @@
 
     /* ── Section hairline rule ── */
     .section-rule { height: 1px; background: var(--cream-deeper); }
+
+    /* ── Cart drawer ── */
+    #cart-overlay { display: none; opacity: 0; transition: opacity .25s ease; }
+    #cart-overlay.is-open { display: block; opacity: 1; }
+    #cart-drawer { transform: translateX(100%); transition: transform .35s cubic-bezier(.25,.46,.45,.94); }
+    #cart-drawer.is-open { transform: translateX(0); }
+    body.cart-open { overflow: hidden; }
+    .qty-btn:hover { background: var(--cream-dark) !important; border-color: var(--brand) !important; }
   </style>
 </head>
 <body>
+
+<!-- ═══════════════════════════════════════════
+     PRODUCT DATA + CART STATE
+═══════════════════════════════════════════ -->
+<script>
+const PRODUCTS = [
+  { id: 'walnut-mug',       name: 'Walnut Turned Mug',      price: 6800,  img: 'reference/Products/Wooden Mugs/52.jpg' },
+  { id: 'maple-mug',        name: 'Maple Grain Mug',         price: 7200,  img: 'reference/Products/Wooden Mugs/53.jpg' },
+  { id: 'carved-spoon-set', name: 'Carved Spoon Set',        price: 4400,  img: 'reference/Products/Wooden Spoons/71.jpg' },
+  { id: 'rustic-oak-mug',   name: 'Rustic Oak Mug',          price: 6400,  img: 'reference/Products/Wooden Mugs/54.jpg' },
+  { id: 'walnut-spoon',     name: 'Serving Spoon — Walnut',  price: 3800,  img: 'reference/Products/Wooden Spoons/72.jpg' },
+  { id: 'cherry-mug',       name: 'Cherry Wood Mug',         price: 7500,  img: 'reference/Products/Wooden Mugs/55.jpg' },
+  { id: 'birch-mug',        name: 'Birch Mug',               price: 5900,  img: 'reference/Products/Wooden Mugs/57.jpg' },
+  { id: 'deep-ladle',       name: 'Deep Ladle',              price: 5200,  img: 'reference/Products/Wooden Spoons/75.jpg' },
+  { id: 'ebony-mug',        name: 'Ebony Mug',               price: 8200,  img: 'reference/Products/Wooden Mugs/58.jpg' },
+  { id: 'butter-spreader',  name: 'Butter Spreader',         price: 2900,  img: 'reference/Products/Wooden Spoons/76.jpg' },
+];
+// Prices are in cents (Stripe convention): 6800 = $68.00
+
+const Cart = (() => {
+  const KEY = 'cobble_cart';
+
+  function load() {
+    try { return JSON.parse(localStorage.getItem(KEY)) || []; }
+    catch { return []; }
+  }
+
+  function save(items) {
+    localStorage.setItem(KEY, JSON.stringify(items));
+    document.dispatchEvent(new CustomEvent('cart:updated', { detail: items }));
+  }
+
+  function add(productId) {
+    const items = load();
+    const existing = items.find(i => i.id === productId);
+    if (existing) {
+      existing.qty += 1;
+    } else {
+      const product = PRODUCTS.find(p => p.id === productId);
+      if (!product) return;
+      items.push({ id: productId, qty: 1 });
+    }
+    save(items);
+  }
+
+  function remove(productId) { save(load().filter(i => i.id !== productId)); }
+
+  function updateQty(productId, qty) {
+    if (qty < 1) { remove(productId); return; }
+    const items = load();
+    const item = items.find(i => i.id === productId);
+    if (item) { item.qty = qty; save(items); }
+  }
+
+  function clear() { save([]); }
+
+  function total() {
+    return load().reduce((sum, item) => {
+      const p = PRODUCTS.find(p => p.id === item.id);
+      return sum + (p ? p.price * item.qty : 0);
+    }, 0);
+  }
+
+  function count() { return load().reduce((sum, i) => sum + i.qty, 0); }
+
+  return { load, add, remove, updateQty, clear, total, count };
+})();
+</script>
 
 <!-- ═══════════════════════════════════════════
      NAV
@@ -286,9 +362,9 @@
       <button aria-label="Search" class="p-2 rounded hover:bg-cream-dark transition-colors focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-brand" style="transition: background .2s;">
         <svg width="20" height="20" fill="none" stroke="#5B4545" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round" viewBox="0 0 24 24"><circle cx="11" cy="11" r="8"/><line x1="21" y1="21" x2="16.65" y2="16.65"/></svg>
       </button>
-      <button aria-label="Cart" class="relative p-2 rounded hover:bg-cream-dark transition-colors focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-brand">
+      <button id="cart-btn" aria-label="Cart" class="relative p-2 rounded hover:bg-cream-dark transition-colors focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-brand">
         <svg width="20" height="20" fill="none" stroke="#5B4545" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round" viewBox="0 0 24 24"><path d="M6 2L3 6v14a2 2 0 002 2h14a2 2 0 002-2V6l-3-4z"/><line x1="3" y1="6" x2="21" y2="6"/><path d="M16 10a4 4 0 01-8 0"/></svg>
-        <span class="absolute top-1 right-1 w-4 h-4 rounded-full text-xs font-semibold flex items-center justify-center" style="background: #5B4545; color: #FFFFFF; font-family: Inter; font-size: 10px; line-height: 1;">2</span>
+        <span id="cart-count" class="absolute top-1 right-1 w-4 h-4 rounded-full text-xs font-semibold items-center justify-center" style="background: #5B4545; color: #FFFFFF; font-family: Inter; font-size: 10px; line-height: 1; display: none;">0</span>
       </button>
     </div>
   </div>
@@ -357,63 +433,69 @@
 
   <div id="bs-track" class="flex gap-5 no-scroll overflow-x-auto pb-2" style="scroll-behavior: smooth;">
 
-    <div class="product-card flex-none cursor-pointer" style="width: 300px;">
+    <div class="product-card flex-none cursor-pointer" style="width: 300px;" data-product-id="walnut-mug">
       <div class="img-wrap"><img src="reference/Products/Wooden Mugs/52.jpg" alt="Walnut Mug" loading="lazy" /></div>
       <div class="pt-3 pb-5 px-1">
         <div class="flex items-baseline justify-between gap-2">
           <h3 class="font-display font-semibold" style="font-size: 21px; color: #3D2E2E; letter-spacing: 0; line-height: 1.1;">Walnut Turned Mug</h3>
           <span class="font-body font-medium flex-shrink-0" style="font-size: 15px; color: #7A5E5E;">$68</span>
         </div>
+        <button class="add-to-cart btn-primary w-full mt-3 py-2" data-product-id="walnut-mug" style="font-size: 14px; letter-spacing: .04em;">Add to Cart</button>
       </div>
     </div>
 
-    <div class="product-card flex-none cursor-pointer" style="width: 300px;">
+    <div class="product-card flex-none cursor-pointer" style="width: 300px;" data-product-id="maple-mug">
       <div class="img-wrap"><img src="reference/Products/Wooden Mugs/53.jpg" alt="Maple Mug" loading="lazy" /></div>
       <div class="pt-3 pb-5 px-1">
         <div class="flex items-baseline justify-between gap-2">
           <h3 class="font-display font-semibold" style="font-size: 21px; color: #3D2E2E; letter-spacing: 0; line-height: 1.1;">Maple Grain Mug</h3>
           <span class="font-body font-medium flex-shrink-0" style="font-size: 15px; color: #7A5E5E;">$72</span>
         </div>
+        <button class="add-to-cart btn-primary w-full mt-3 py-2" data-product-id="maple-mug" style="font-size: 14px; letter-spacing: .04em;">Add to Cart</button>
       </div>
     </div>
 
-    <div class="product-card flex-none cursor-pointer" style="width: 300px;">
+    <div class="product-card flex-none cursor-pointer" style="width: 300px;" data-product-id="carved-spoon-set">
       <div class="img-wrap"><img src="reference/Products/Wooden Spoons/71.jpg" alt="Carved Spoon Set" loading="lazy" /></div>
       <div class="pt-3 pb-5 px-1">
         <div class="flex items-baseline justify-between gap-2">
           <h3 class="font-display font-semibold" style="font-size: 21px; color: #3D2E2E; letter-spacing: 0; line-height: 1.1;">Carved Spoon Set</h3>
           <span class="font-body font-medium flex-shrink-0" style="font-size: 15px; color: #7A5E5E;">$44</span>
         </div>
+        <button class="add-to-cart btn-primary w-full mt-3 py-2" data-product-id="carved-spoon-set" style="font-size: 14px; letter-spacing: .04em;">Add to Cart</button>
       </div>
     </div>
 
-    <div class="product-card flex-none cursor-pointer" style="width: 300px;">
+    <div class="product-card flex-none cursor-pointer" style="width: 300px;" data-product-id="rustic-oak-mug">
       <div class="img-wrap"><img src="reference/Products/Wooden Mugs/54.jpg" alt="Oak Mug" loading="lazy" /></div>
       <div class="pt-3 pb-5 px-1">
         <div class="flex items-baseline justify-between gap-2">
           <h3 class="font-display font-semibold" style="font-size: 21px; color: #3D2E2E; letter-spacing: 0; line-height: 1.1;">Rustic Oak Mug</h3>
           <span class="font-body font-medium flex-shrink-0" style="font-size: 15px; color: #7A5E5E;">$64</span>
         </div>
+        <button class="add-to-cart btn-primary w-full mt-3 py-2" data-product-id="rustic-oak-mug" style="font-size: 14px; letter-spacing: .04em;">Add to Cart</button>
       </div>
     </div>
 
-    <div class="product-card flex-none cursor-pointer" style="width: 300px;">
+    <div class="product-card flex-none cursor-pointer" style="width: 300px;" data-product-id="walnut-spoon">
       <div class="img-wrap"><img src="reference/Products/Wooden Spoons/72.jpg" alt="Serving Spoon" loading="lazy" /></div>
       <div class="pt-3 pb-5 px-1">
         <div class="flex items-baseline justify-between gap-2">
           <h3 class="font-display font-semibold" style="font-size: 21px; color: #3D2E2E; letter-spacing: 0; line-height: 1.1;">Serving Spoon — Walnut</h3>
           <span class="font-body font-medium flex-shrink-0" style="font-size: 15px; color: #7A5E5E;">$38</span>
         </div>
+        <button class="add-to-cart btn-primary w-full mt-3 py-2" data-product-id="walnut-spoon" style="font-size: 14px; letter-spacing: .04em;">Add to Cart</button>
       </div>
     </div>
 
-    <div class="product-card flex-none cursor-pointer" style="width: 300px;">
+    <div class="product-card flex-none cursor-pointer" style="width: 300px;" data-product-id="cherry-mug">
       <div class="img-wrap"><img src="reference/Products/Wooden Mugs/55.jpg" alt="Cherry Mug" loading="lazy" /></div>
       <div class="pt-3 pb-5 px-1">
         <div class="flex items-baseline justify-between gap-2">
           <h3 class="font-display font-semibold" style="font-size: 21px; color: #3D2E2E; letter-spacing: 0; line-height: 1.1;">Cherry Wood Mug</h3>
           <span class="font-body font-medium flex-shrink-0" style="font-size: 15px; color: #7A5E5E;">$75</span>
         </div>
+        <button class="add-to-cart btn-primary w-full mt-3 py-2" data-product-id="cherry-mug" style="font-size: 14px; letter-spacing: .04em;">Add to Cart</button>
       </div>
     </div>
 
@@ -554,43 +636,47 @@
 
   <div class="grid grid-cols-2 md:grid-cols-4 gap-5">
 
-    <div class="product-card cursor-pointer">
+    <div class="product-card cursor-pointer" data-product-id="birch-mug">
       <div class="img-wrap"><img src="reference/Products/Wooden Mugs/57.jpg" alt="Birch Mug" loading="lazy" style="height: 280px;" /></div>
       <div class="pt-3 pb-5 px-1">
         <div class="flex items-baseline justify-between gap-2">
           <h3 class="font-display font-semibold" style="font-size: 21px; color: #3D2E2E; letter-spacing: 0; line-height: 1.1;">Birch Mug</h3>
           <span class="font-body font-medium flex-shrink-0" style="font-size: 15px; color: #7A5E5E;">$59</span>
         </div>
+        <button class="add-to-cart btn-primary w-full mt-3 py-2" data-product-id="birch-mug" style="font-size: 14px; letter-spacing: .04em;">Add to Cart</button>
       </div>
     </div>
 
-    <div class="product-card cursor-pointer">
+    <div class="product-card cursor-pointer" data-product-id="deep-ladle">
       <div class="img-wrap"><img src="reference/Products/Wooden Spoons/75.jpg" alt="Deep Ladle" loading="lazy" style="height: 280px;" /></div>
       <div class="pt-3 pb-5 px-1">
         <div class="flex items-baseline justify-between gap-2">
           <h3 class="font-display font-semibold" style="font-size: 21px; color: #3D2E2E; letter-spacing: 0; line-height: 1.1;">Deep Ladle</h3>
           <span class="font-body font-medium flex-shrink-0" style="font-size: 15px; color: #7A5E5E;">$52</span>
         </div>
+        <button class="add-to-cart btn-primary w-full mt-3 py-2" data-product-id="deep-ladle" style="font-size: 14px; letter-spacing: .04em;">Add to Cart</button>
       </div>
     </div>
 
-    <div class="product-card cursor-pointer">
+    <div class="product-card cursor-pointer" data-product-id="ebony-mug">
       <div class="img-wrap"><img src="reference/Products/Wooden Mugs/58.jpg" alt="Ebony Mug" loading="lazy" style="height: 280px;" /></div>
       <div class="pt-3 pb-5 px-1">
         <div class="flex items-baseline justify-between gap-2">
           <h3 class="font-display font-semibold" style="font-size: 21px; color: #3D2E2E; letter-spacing: 0; line-height: 1.1;">Ebony Mug</h3>
           <span class="font-body font-medium flex-shrink-0" style="font-size: 15px; color: #7A5E5E;">$82</span>
         </div>
+        <button class="add-to-cart btn-primary w-full mt-3 py-2" data-product-id="ebony-mug" style="font-size: 14px; letter-spacing: .04em;">Add to Cart</button>
       </div>
     </div>
 
-    <div class="product-card cursor-pointer">
+    <div class="product-card cursor-pointer" data-product-id="butter-spreader">
       <div class="img-wrap"><img src="reference/Products/Wooden Spoons/76.jpg" alt="Butter Spreader" loading="lazy" style="height: 280px;" /></div>
       <div class="pt-3 pb-5 px-1">
         <div class="flex items-baseline justify-between gap-2">
           <h3 class="font-display font-semibold" style="font-size: 21px; color: #3D2E2E; letter-spacing: 0; line-height: 1.1;">Butter Spreader</h3>
           <span class="font-body font-medium flex-shrink-0" style="font-size: 15px; color: #7A5E5E;">$29</span>
         </div>
+        <button class="add-to-cart btn-primary w-full mt-3 py-2" data-product-id="butter-spreader" style="font-size: 14px; letter-spacing: .04em;">Add to Cart</button>
       </div>
     </div>
 
@@ -753,6 +839,188 @@
   });
   document.getElementById('next-bs').addEventListener('click', () => {
     track.scrollBy({ left: 300, behavior: 'smooth' });
+  });
+</script>
+
+
+<!-- ═══════════════════════════════════════════
+     CART DRAWER
+═══════════════════════════════════════════ -->
+
+<!-- Overlay -->
+<div id="cart-overlay" class="fixed inset-0 z-[60]" style="background: rgba(30,20,20,.45); backdrop-filter: blur(2px);" aria-hidden="true"></div>
+
+<!-- Drawer Panel -->
+<aside id="cart-drawer" role="dialog" aria-modal="true" aria-label="Shopping cart"
+  class="fixed top-0 right-0 h-full z-[70] flex flex-col"
+  style="width: min(420px, 100vw); background: #FFFFFF; box-shadow: -8px 0 40px rgba(61,46,46,.18);">
+
+  <!-- Header -->
+  <div class="flex items-center justify-between px-6 py-5 border-b" style="border-color: #D7D0C5; flex-shrink: 0;">
+    <h2 class="font-display font-semibold" style="font-size: 24px; color: #3D2E2E;">Your Cart</h2>
+    <button id="cart-close" aria-label="Close cart" class="p-2 rounded focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-brand" style="transition: background .2s;">
+      <svg width="20" height="20" fill="none" stroke="#5B4545" stroke-width="2" stroke-linecap="round" viewBox="0 0 24 24"><line x1="18" y1="6" x2="6" y2="18"/><line x1="6" y1="6" x2="18" y2="18"/></svg>
+    </button>
+  </div>
+
+  <!-- Item List -->
+  <div id="cart-items" class="flex-1 overflow-y-auto px-6 py-4" style="overscroll-behavior: contain;"></div>
+
+  <!-- Footer -->
+  <div id="cart-footer" class="px-6 py-5 border-t" style="border-color: #D7D0C5; flex-shrink: 0; display: none;">
+    <div class="flex justify-between items-baseline mb-4">
+      <span class="font-body text-sm" style="color: #7A5E5E;">Subtotal</span>
+      <span id="cart-subtotal" class="font-display font-semibold" style="font-size: 22px; color: #3D2E2E;"></span>
+    </div>
+    <button id="checkout-btn" class="btn-primary w-full py-4" style="font-size: 17px; letter-spacing: .03em; text-align: center; width: 100%;">
+      Checkout
+    </button>
+    <p class="text-center font-body mt-3" style="font-size: 12px; color: #7A5E5E;">Secure payment via Stripe</p>
+  </div>
+</aside>
+
+
+<!-- ═══════════════════════════════════════════
+     JS — Cart
+═══════════════════════════════════════════ -->
+<script>
+  /* ── Badge ── */
+  function updateCartBadge() {
+    const el = document.getElementById('cart-count');
+    const n = Cart.count();
+    el.textContent = n;
+    el.style.display = n > 0 ? 'flex' : 'none';
+  }
+  document.addEventListener('cart:updated', updateCartBadge);
+  updateCartBadge();
+
+  /* ── Render drawer ── */
+  function renderCartDrawer() {
+    const items = Cart.load();
+    const container = document.getElementById('cart-items');
+    const footer    = document.getElementById('cart-footer');
+    const subtotal  = document.getElementById('cart-subtotal');
+
+    if (items.length === 0) {
+      container.innerHTML = `
+        <div style="display:flex;flex-direction:column;align-items:center;justify-content:center;height:100%;text-align:center;padding:64px 0;">
+          <svg width="48" height="48" fill="none" stroke="#D7D0C5" stroke-width="1.5" viewBox="0 0 24 24" style="margin-bottom:16px;"><path d="M6 2L3 6v14a2 2 0 002 2h14a2 2 0 002-2V6l-3-4z"/><line x1="3" y1="6" x2="21" y2="6"/><path d="M16 10a4 4 0 01-8 0"/></svg>
+          <p style="font-family:'Cormorant Garamond',Georgia,serif;font-size:20px;color:#3D2E2E;margin-bottom:6px;">Your cart is empty</p>
+          <p style="font-family:Inter,sans-serif;font-size:14px;color:#7A5E5E;">Add something beautiful.</p>
+        </div>`;
+      footer.style.display = 'none';
+      return;
+    }
+
+    container.innerHTML = items.map(item => {
+      const p = PRODUCTS.find(p => p.id === item.id);
+      if (!p) return '';
+      const lineTotal = ((p.price * item.qty) / 100).toFixed(2);
+      return `
+        <div style="display:flex;gap:16px;padding:16px 0;border-bottom:1px solid #F2F2EF;">
+          <img src="${p.img}" alt="${p.name}" style="width:72px;height:72px;object-fit:cover;border-radius:6px;flex-shrink:0;" />
+          <div style="flex:1;min-width:0;">
+            <p style="font-family:'Cormorant Garamond',Georgia,serif;font-size:16px;font-weight:600;color:#3D2E2E;white-space:nowrap;overflow:hidden;text-overflow:ellipsis;">${p.name}</p>
+            <p style="font-family:Inter,sans-serif;font-size:13px;color:#7A5E5E;margin-top:2px;">$${(p.price/100).toFixed(2)}</p>
+            <div style="display:flex;align-items:center;gap:10px;margin-top:10px;">
+              <button class="qty-btn" data-id="${p.id}" data-delta="-1" style="width:28px;height:28px;border-radius:6px;border:1.5px solid #D7D0C5;background:white;cursor:pointer;font-size:18px;display:flex;align-items:center;justify-content:center;line-height:1;transition:background .15s,border-color .15s;">−</button>
+              <span style="font-family:Inter,sans-serif;font-size:14px;font-weight:500;min-width:20px;text-align:center;">${item.qty}</span>
+              <button class="qty-btn" data-id="${p.id}" data-delta="1"  style="width:28px;height:28px;border-radius:6px;border:1.5px solid #D7D0C5;background:white;cursor:pointer;font-size:18px;display:flex;align-items:center;justify-content:center;line-height:1;transition:background .15s,border-color .15s;">+</button>
+              <button class="remove-btn" data-id="${p.id}" style="margin-left:auto;font-size:12px;color:#7A5E5E;background:none;border:none;cursor:pointer;padding:4px;text-decoration:underline;font-family:Inter,sans-serif;">Remove</button>
+            </div>
+          </div>
+          <span style="font-family:Inter,sans-serif;font-size:15px;font-weight:500;color:#3D2E2E;flex-shrink:0;padding-top:2px;">$${lineTotal}</span>
+        </div>`;
+    }).join('');
+
+    subtotal.textContent = `$${(Cart.total() / 100).toFixed(2)}`;
+    footer.style.display = 'block';
+  }
+
+  /* ── Open / Close ── */
+  function openCart() {
+    const overlay = document.getElementById('cart-overlay');
+    const drawer  = document.getElementById('cart-drawer');
+    renderCartDrawer();
+    overlay.classList.add('is-open');
+    drawer.classList.add('is-open');
+    document.body.classList.add('cart-open');
+    document.getElementById('cart-close').focus();
+  }
+
+  function closeCart() {
+    document.getElementById('cart-overlay').classList.remove('is-open');
+    document.getElementById('cart-drawer').classList.remove('is-open');
+    document.body.classList.remove('cart-open');
+    document.getElementById('cart-btn').focus();
+  }
+
+  document.getElementById('cart-btn').addEventListener('click', openCart);
+  document.getElementById('cart-overlay').addEventListener('click', closeCart);
+  document.getElementById('cart-close').addEventListener('click', closeCart);
+  document.addEventListener('keydown', e => { if (e.key === 'Escape') closeCart(); });
+
+  /* ── Qty / Remove (delegated) ── */
+  document.getElementById('cart-items').addEventListener('click', e => {
+    const qtyBtn    = e.target.closest('.qty-btn');
+    const removeBtn = e.target.closest('.remove-btn');
+    if (qtyBtn) {
+      const id = qtyBtn.dataset.id;
+      const delta = parseInt(qtyBtn.dataset.delta);
+      const item = Cart.load().find(i => i.id === id);
+      if (item) Cart.updateQty(id, item.qty + delta);
+      renderCartDrawer();
+    }
+    if (removeBtn) {
+      Cart.remove(removeBtn.dataset.id);
+      renderCartDrawer();
+    }
+  });
+
+  /* ── Re-render if drawer open on cart change ── */
+  document.addEventListener('cart:updated', () => {
+    updateCartBadge();
+    if (document.body.classList.contains('cart-open')) renderCartDrawer();
+  });
+
+  /* ── Add to Cart buttons ── */
+  document.addEventListener('click', e => {
+    const btn = e.target.closest('.add-to-cart');
+    if (!btn) return;
+    Cart.add(btn.dataset.productId);
+    const orig = btn.textContent;
+    btn.textContent = 'Added!';
+    btn.disabled = true;
+    btn.style.background = '#3D2E2E';
+    setTimeout(() => {
+      btn.textContent = orig;
+      btn.disabled = false;
+      btn.style.background = '';
+    }, 1200);
+  });
+
+  /* ── Checkout button ── */
+  document.getElementById('checkout-btn').addEventListener('click', async () => {
+    const btn = document.getElementById('checkout-btn');
+    btn.disabled = true;
+    btn.textContent = 'Redirecting…';
+    try {
+      const res = await fetch('/api/checkout', {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify({ items: Cart.load() }),
+      });
+      const data = await res.json();
+      if (data.url) {
+        window.location.href = data.url;
+      } else {
+        throw new Error(data.error || 'Checkout failed');
+      }
+    } catch (err) {
+      alert('Something went wrong: ' + err.message);
+      btn.disabled = false;
+      btn.textContent = 'Checkout';
+    }
   });
 </script>
 

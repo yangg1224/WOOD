@@ -19,7 +19,8 @@
       "Bash(node screenshot.mjs http://localhost:3000 fix1)",
       "Bash(node screenshot.mjs http://localhost:3000 fix2)",
       "Bash(node -e ':*)",
-      "Bash(node screenshot.mjs http://localhost:3000 final)"
+      "Bash(node screenshot.mjs http://localhost:3000 final)",
+      "Bash(npm init:*)"
     ]
   }
 }
