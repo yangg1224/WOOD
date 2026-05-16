@@ -88,7 +88,7 @@
       font-family: 'Cormorant Garamond', Georgia, serif;
       font-weight: 600;
       letter-spacing: .02em;
-      border-radius: 6px;
+      border-radius: 8px;
       transition: background .2s ease, transform .15s ease, box-shadow .2s ease;
       box-shadow: 0 2px 8px rgba(61,46,46,.18), 0 1px 2px rgba(61,46,46,.12);
     }
@@ -106,6 +106,21 @@
       outline-offset: 3px;
     }
 
+    .btn-olive {
+      display: inline-block;
+      background: var(--olive);
+      color: var(--brand-dark);
+      font-family: 'Cormorant Garamond', Georgia, serif;
+      font-weight: 600;
+      letter-spacing: .02em;
+      border-radius: 8px;
+      transition: background .2s ease, transform .15s ease, box-shadow .2s ease;
+      box-shadow: 0 2px 8px rgba(61,46,46,.18), 0 1px 2px rgba(61,46,46,.12);
+    }
+    .btn-olive:hover { background: #d4d082; transform: translateY(-1px); box-shadow: 0 6px 18px rgba(61,46,46,.18), 0 2px 5px rgba(61,46,46,.12); }
+    .btn-olive:active { transform: translateY(0); }
+    .btn-olive:focus-visible { outline: 2px solid var(--olive); outline-offset: 3px; }
+
     .btn-outline {
       display: inline-block;
       border: 1.5px solid var(--brand);
@@ -113,7 +128,7 @@
       font-family: 'Cormorant Garamond', Georgia, serif;
       font-weight: 600;
       letter-spacing: .02em;
-      border-radius: 6px;
+      border-radius: 8px;
       transition: background .2s ease, color .2s ease, transform .15s ease;
     }
     .btn-outline:hover { background: var(--brand); color: var(--cream); transform: translateY(-1px); }
@@ -123,7 +138,7 @@
     /* ── Product card ── */
     .product-card {
       background: white;
-      border-radius: 8px;
+      border-radius: 12px;
       overflow: hidden;
       cursor: pointer;
     }
@@ -149,7 +164,7 @@
     /* ── Category card ── */
     .cat-card {
       position: relative;
-      border-radius: 8px;
+      border-radius: 12px;
       overflow: hidden;
       cursor: pointer;
     }
@@ -175,7 +190,7 @@
     .arrow-btn {
       width: 40px;
       height: 40px;
-      border-radius: 8px;
+      border-radius: 50%;
       background: white;
       border: 1.5px solid var(--cream-deeper);
       display: flex; align-items: center; justify-content: center;
@@ -210,14 +225,16 @@
 
     /* ── Testimonial card ── */
     .review-card {
-      background: white;
-      border-radius: 8px;
-      box-shadow: 0 2px 8px rgba(61,46,46,.05), 0 10px 28px rgba(61,46,46,.06);
+      background: #FDFCFA;
+      border-radius: 16px;
+      border: 1px solid rgba(215,208,197,0.65);
+      border-top: 3px solid var(--brand);
+      box-shadow: 0 2px 6px rgba(61,46,46,.04), 0 8px 24px rgba(61,46,46,.06);
       transition: transform .3s cubic-bezier(.34,1.56,.64,1), box-shadow .3s ease;
     }
     .review-card:hover {
-      transform: translateY(-4px);
-      box-shadow: 0 4px 16px rgba(91,69,69,.1), 0 16px 40px rgba(91,69,69,.1);
+      transform: translateY(-5px);
+      box-shadow: 0 6px 20px rgba(91,69,69,.10), 0 20px 48px rgba(91,69,69,.09);
     }
 
     /* ── Newsletter input ── */
@@ -225,7 +242,7 @@
       background: rgba(255,255,255,.15);
       border: 1px solid rgba(247,242,235,.4);
       color: var(--cream);
-      border-radius: 6px;
+      border-radius: 8px;
       transition: background .2s, border-color .2s;
     }
     .newsletter-input::placeholder { color: rgba(247,242,235,.5); }
@@ -249,15 +266,38 @@
     /* ── Product card overrides ── */
     .product-card {
       background: var(--cream);
-      border-radius: 8px;
+      border-radius: 12px;
+      border: 1px solid rgba(215,208,197,0.4);
+      box-shadow: 0 1px 3px rgba(91,69,69,.05), 0 4px 10px rgba(91,69,69,.06);
+    }
+    .product-card:hover {
+      box-shadow: 0 8px 24px rgba(61,46,46,.14), 0 20px 48px rgba(61,46,46,.10);
     }
     .product-card .img-wrap img {
       height: 320px;
     }
-    .product-card .img-wrap::after { display: none; }
 
     /* ── Section hairline rule ── */
     .section-rule { height: 1px; background: var(--cream-deeper); }
+
+    /* ── Mobile nav drawer ── */
+    #mobile-nav { display:none; position:fixed; inset:0; z-index:40; }
+    #mobile-nav.is-open { display:block; }
+    #mobile-nav-overlay { position:absolute; inset:0; background:rgba(30,20,20,.45); backdrop-filter:blur(2px); }
+    #mobile-nav-drawer {
+      position:absolute; top:0; right:0; bottom:0; width:min(80vw,320px);
+      background:white; padding:24px; display:flex; flex-direction:column;
+      transform:translateX(100%); transition:transform .3s cubic-bezier(.25,.46,.45,.94);
+      box-shadow: -8px 0 40px rgba(61,46,46,.18);
+    }
+    #mobile-nav.is-open #mobile-nav-drawer { transform:translateX(0); }
+    #mobile-nav-drawer a {
+      display:block; padding:16px 0;
+      font-family:'Cormorant Garamond',Georgia,serif; font-size:28px; font-weight:600;
+      color:#3D2E2E; border-bottom:1px solid #D7D0C5; transition:color .2s; text-decoration:none;
+    }
+    #mobile-nav-drawer a:last-of-type { border-bottom:none; }
+    #mobile-nav-drawer a:hover { color:#5B4545; }
 
     /* ── Cart drawer ── */
     #cart-overlay { display: none; opacity: 0; transition: opacity .25s ease; }
@@ -266,6 +306,148 @@
     #cart-drawer.is-open { transform: translateX(0); }
     body.cart-open { overflow: hidden; }
     .qty-btn:hover { background: var(--cream-dark) !important; border-color: var(--brand) !important; }
+
+    /* ── Search ── */
+    #search-overlay.is-open { opacity: 1 !important; }
+    #search-overlay.is-open #search-panel { transform: translate(-50%, 0) !important; }
+    body.search-open { overflow: hidden; }
+    input[type="search"]::-webkit-search-cancel-button { display: none; }
+    .search-result-item {
+      display: flex; align-items: center; gap: 14px;
+      padding: 12px 24px; cursor: pointer;
+      transition: background .15s ease;
+    }
+    .search-result-item:hover { background: var(--cream-dark); }
+    .search-result-item img {
+      width: 52px; height: 52px; border-radius: 5px;
+      object-fit: cover; flex-shrink: 0;
+    }
+    .search-result-name {
+      flex: 1; font-family: 'Cormorant Garamond', Georgia, serif;
+      font-size: 18px; font-weight: 600; color: #3D2E2E; letter-spacing: -.01em;
+    }
+    .search-result-price {
+      font-family: 'Inter', sans-serif; font-size: 14px;
+      color: #7A5E5E; font-weight: 500; flex-shrink: 0;
+    }
+    .search-empty {
+      padding: 28px 24px; font-family: 'Inter', sans-serif;
+      font-size: 14px; color: #7A5E5E; text-align: center;
+    }
+    .search-results-label {
+      padding: 14px 24px 6px; font-family: 'Inter', sans-serif;
+      font-size: 11px; font-weight: 600; letter-spacing: .14em;
+      text-transform: uppercase; color: #7A5E5E;
+    }
+
+    /* ── Product Detail Page ── */
+    #product-view { min-height: 100vh; background: var(--cream); }
+
+    .pdp-breadcrumb {
+      display: flex; align-items: center; gap: 8px;
+      font-family: 'Inter', sans-serif; font-size: 13px;
+      color: #7A5E5E; letter-spacing: .04em; padding: 28px 0 0;
+    }
+    .pdp-breadcrumb a {
+      color: #7A5E5E; text-decoration: none;
+      transition: color .2s ease; display: flex; align-items: center; gap: 4px;
+    }
+    .pdp-breadcrumb a:hover { color: var(--brand-dark); }
+    .pdp-breadcrumb-sep { opacity: .4; }
+
+    .pdp-grid {
+      display: grid; grid-template-columns: 1fr;
+      gap: 40px; padding: 32px 0 64px;
+    }
+    @media (min-width: 768px) {
+      .pdp-grid { grid-template-columns: 1fr 1fr; gap: 64px; padding: 48px 0 80px; }
+    }
+
+    .pdp-img-wrap {
+      position: relative; border-radius: 14px; overflow: hidden;
+      background: var(--cream-dark);
+    }
+    .pdp-img-wrap img {
+      width: 100%; height: auto; aspect-ratio: 4/5;
+      object-fit: cover; display: block;
+    }
+    .pdp-img-wrap::after {
+      content: ''; position: absolute; inset: 0; pointer-events: none;
+      background-image: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='300' height='300'%3E%3Cfilter id='n'%3E%3CfeTurbulence type='fractalNoise' baseFrequency='0.75' numOctaves='4' stitchTiles='stitch'/%3E%3C/filter%3E%3Crect width='300' height='300' filter='url(%23n)' opacity='0.04'/%3E%3C/svg%3E");
+      background-repeat: repeat; mix-blend-mode: multiply;
+    }
+
+    .pdp-info { display: flex; flex-direction: column; justify-content: flex-start; }
+    .pdp-category-label {
+      font-family: 'Inter', sans-serif; font-size: 11px; font-weight: 600;
+      letter-spacing: .18em; text-transform: uppercase; color: #7A5E5E; margin-bottom: 12px;
+    }
+    .pdp-name {
+      font-family: 'Cormorant Garamond', Georgia, serif;
+      font-size: clamp(38px, 4vw, 56px); font-weight: 600;
+      color: #3D2E2E; line-height: 1.0; letter-spacing: -.01em; margin-bottom: 16px;
+    }
+    .pdp-price {
+      font-family: 'Cormorant Garamond', Georgia, serif;
+      font-size: 28px; font-weight: 600; color: #5B4545; margin-bottom: 28px;
+    }
+    .pdp-divider { height: 1px; background: var(--cream-deeper); margin-bottom: 28px; }
+    .pdp-description {
+      font-family: 'Inter', sans-serif; font-size: 16px; line-height: 1.85;
+      color: #5B4545; margin-bottom: 32px;
+    }
+    .pdp-meta { display: flex; flex-direction: column; gap: 14px; margin-bottom: 36px; }
+    .pdp-meta-row { display: flex; gap: 12px; font-family: 'Inter', sans-serif; font-size: 14px; line-height: 1.6; }
+    .pdp-meta-label { font-weight: 600; color: #3D2E2E; flex-shrink: 0; width: 90px; }
+    .pdp-meta-value { color: #7A5E5E; }
+
+    .pdp-atc-btn { width: 100%; padding: 18px 24px; font-size: 17px; margin-bottom: 12px; }
+    @media (min-width: 768px) { .pdp-atc-btn { width: auto; min-width: 240px; } }
+
+    .pdp-added-msg {
+      font-family: 'Inter', sans-serif; font-size: 13px; color: #5B4545;
+      opacity: 0; transition: opacity .3s ease; height: 20px; letter-spacing: .04em;
+    }
+    .pdp-added-msg.visible { opacity: 1; }
+
+    .pdp-related { padding: 48px 0 80px; border-top: 1px solid var(--cream-deeper); }
+    .pdp-related-heading {
+      font-family: 'Cormorant Garamond', Georgia, serif;
+      font-size: clamp(28px, 3vw, 40px); font-weight: 600;
+      color: #3D2E2E; margin-bottom: 28px; letter-spacing: -.01em;
+    }
+    .pdp-related-strip { display: flex; gap: 20px; overflow-x: auto; padding-bottom: 8px; }
+    .pdp-related-strip::-webkit-scrollbar { height: 4px; }
+    .pdp-related-strip::-webkit-scrollbar-track { background: var(--cream-dark); border-radius: 2px; }
+    .pdp-related-strip::-webkit-scrollbar-thumb { background: var(--cream-deeper); border-radius: 2px; }
+
+    /* ── Category page ── */
+    .category-hero {
+      position: relative; border-radius: 14px; overflow: hidden;
+      margin: 32px 0 0; height: clamp(180px, 22vw, 320px);
+    }
+    .category-hero img {
+      width: 100%; height: 100%; object-fit: cover; display: block;
+      filter: brightness(0.6) saturate(0.8);
+    }
+    .category-hero-overlay {
+      position: absolute; inset: 0;
+      background: linear-gradient(to top, rgba(20,14,14,.85) 0%, rgba(20,14,14,.2) 60%, transparent 100%);
+    }
+    .category-hero-text {
+      position: absolute; bottom: 0; left: 0; right: 0; padding: 32px 40px;
+    }
+    .category-grid {
+      display: grid; grid-template-columns: repeat(2, 1fr);
+      gap: 24px; padding: 40px 0 80px;
+    }
+    @media (min-width: 768px)  { .category-grid { grid-template-columns: repeat(3, 1fr); } }
+    @media (min-width: 1024px) { .category-grid { grid-template-columns: repeat(4, 1fr); } }
+    .category-empty {
+      padding: 80px 0; text-align: center;
+      font-family: 'Cormorant Garamond', Georgia, serif;
+      font-size: 28px; color: #7A5E5E; letter-spacing: .01em;
+    }
   </style>
 </head>
 <body>
@@ -275,16 +457,106 @@
 ═══════════════════════════════════════════ -->
 <script>
 const PRODUCTS = [
-  { id: 'walnut-mug',       name: 'Walnut Turned Mug',      price: 6800,  img: 'reference/Products/Wooden Mugs/52.jpg' },
-  { id: 'maple-mug',        name: 'Maple Grain Mug',         price: 7200,  img: 'reference/Products/Wooden Mugs/53.jpg' },
-  { id: 'carved-spoon-set', name: 'Carved Spoon Set',        price: 4400,  img: 'reference/Products/Wooden Spoons/71.jpg' },
-  { id: 'rustic-oak-mug',   name: 'Rustic Oak Mug',          price: 6400,  img: 'reference/Products/Wooden Mugs/54.jpg' },
-  { id: 'walnut-spoon',     name: 'Serving Spoon — Walnut',  price: 3800,  img: 'reference/Products/Wooden Spoons/72.jpg' },
-  { id: 'cherry-mug',       name: 'Cherry Wood Mug',         price: 7500,  img: 'reference/Products/Wooden Mugs/55.jpg' },
-  { id: 'birch-mug',        name: 'Birch Mug',               price: 5900,  img: 'reference/Products/Wooden Mugs/57.jpg' },
-  { id: 'deep-ladle',       name: 'Deep Ladle',              price: 5200,  img: 'reference/Products/Wooden Spoons/75.jpg' },
-  { id: 'ebony-mug',        name: 'Ebony Mug',               price: 8200,  img: 'reference/Products/Wooden Mugs/58.jpg' },
-  { id: 'butter-spreader',  name: 'Butter Spreader',         price: 2900,  img: 'reference/Products/Wooden Spoons/76.jpg' },
+  {
+    id: 'walnut-mug',
+    name: 'Walnut Turned Mug',
+    price: 6800,
+    img: 'reference/Products/Wooden Mugs/52.jpg',
+    category: 'mugs',
+    description: 'Hand-turned on a slow lathe from a single walnut burl, this 8 oz mug carries the grain of its origin — no two are identical. Sealed with three coats of food-safe mineral oil and finished with a beeswax buff. The subtle taper fits naturally in the hand. Designed to be used daily, not shelved.',
+    materials: 'Black walnut (Juglans nigra), food-safe mineral oil, beeswax topcoat',
+    dimensions: '3.5″ dia. × 4″ tall — holds 8 oz',
+  },
+  {
+    id: 'maple-mug',
+    name: 'Maple Grain Mug',
+    price: 7200,
+    img: 'reference/Products/Wooden Mugs/53.jpg',
+    category: 'mugs',
+    description: 'Turned from dense hard maple prized for its pale, even grain and natural antimicrobial properties. At 10 oz this is our largest mug — wide enough for a generous latte, weighted enough to feel substantial. Food-safe oil finish, sanded to 400 grit.',
+    materials: 'Hard maple (Acer saccharum), food-safe mineral oil finish',
+    dimensions: '3.75″ dia. × 4.25″ tall — holds 10 oz',
+  },
+  {
+    id: 'carved-spoon-set',
+    name: 'Carved Spoon Set',
+    price: 4400,
+    img: 'reference/Products/Wooden Spoons/71.jpg',
+    category: 'spoons',
+    description: 'A set of three hand-carved spoons in graduated sizes — teaspoon, tablespoon, and dessert spoon. Each is shaped with a carving knife and hook knife from the same billet of cherry wood so the grain flows consistently across all three. Lightweight, smooth, and designed for daily use.',
+    materials: 'Cherry wood (Prunus serotina), raw linseed oil finish',
+    dimensions: 'Lengths: 6″, 8″, 10.5″ — set of 3',
+  },
+  {
+    id: 'rustic-oak-mug',
+    name: 'Rustic Oak Mug',
+    price: 6400,
+    img: 'reference/Products/Wooden Mugs/54.jpg',
+    category: 'mugs',
+    description: 'White oak with visible medullary rays — the fine silver flecks that appear when the wood is quartersawn. Intentionally left with a slightly rougher texture on the outer wall; the interior is sanded glass-smooth for comfort. A piece that ages beautifully with use.',
+    materials: 'White oak (Quercus alba), food-safe tung oil finish',
+    dimensions: '3.5″ dia. × 3.75″ tall — holds 8 oz',
+  },
+  {
+    id: 'walnut-spoon',
+    name: 'Serving Spoon — Walnut',
+    price: 3800,
+    img: 'reference/Products/Wooden Spoons/72.jpg',
+    category: 'spoons',
+    description: 'A long-handled serving spoon carved from a single piece of walnut. The bowl is deep enough to serve rice or roasted vegetables without spilling. The handle is tapered for grip and finished with a hanging hole — practical in every way.',
+    materials: 'Black walnut, food-safe mineral oil',
+    dimensions: '13″ total length, 3″ bowl',
+  },
+  {
+    id: 'cherry-mug',
+    name: 'Cherry Wood Mug',
+    price: 7500,
+    img: 'reference/Products/Wooden Mugs/55.jpg',
+    category: 'mugs',
+    description: 'Cherry is the wood that ages beautifully — when new it is pale pink, and with sunlight exposure it deepens to a rich amber over months. This 9 oz mug documents that transformation. Buy it pale and watch it change.',
+    materials: 'Black cherry (Prunus serotina), food-safe mineral oil and beeswax',
+    dimensions: '3.5″ dia. × 4″ tall — holds 9 oz',
+  },
+  {
+    id: 'birch-mug',
+    name: 'Birch Mug',
+    price: 5900,
+    img: 'reference/Products/Wooden Mugs/57.jpg',
+    category: 'mugs',
+    description: 'Turned from northern birch with its characteristic fine white grain and subtle figuring. Lighter in weight than our hardwood mugs, this piece is ideal for those who prefer a delicate feel. Finished with hemp oil for a matte, natural look.',
+    materials: 'Yellow birch (Betula alleghaniensis), hemp oil finish',
+    dimensions: '3.25″ dia. × 3.75″ tall — holds 7 oz',
+  },
+  {
+    id: 'deep-ladle',
+    name: 'Deep Ladle',
+    price: 5200,
+    img: 'reference/Products/Wooden Spoons/75.jpg',
+    category: 'spoons',
+    description: 'A soup ladle built for the stovetop. The deep 4 oz bowl holds enough for a generous serving; the long handle keeps your hand well clear of the heat. Carved from a single piece of ash for its resilience and flexible grain — ash is the wood of tool handles for a reason.',
+    materials: 'White ash (Fraxinus americana), food-safe mineral oil',
+    dimensions: '15″ total length, 4 oz bowl capacity',
+  },
+  {
+    id: 'ebony-mug',
+    name: 'Ebony Mug',
+    price: 8200,
+    img: 'reference/Products/Wooden Mugs/58.jpg',
+    category: 'mugs',
+    description: 'Our rarest piece. Turned from a small billet of Gabon ebony, one of the densest hardwoods on earth. The surface needs no finish — ebony polishes itself to a near-glass sheen through use alone. Very limited stock; we make one or two per month.',
+    materials: 'Gabon ebony (Diospyros crassiflora), unfinished (self-polishing)',
+    dimensions: '3.25″ dia. × 3.5″ tall — holds 7 oz',
+  },
+  {
+    id: 'butter-spreader',
+    name: 'Butter Spreader',
+    price: 2900,
+    img: 'reference/Products/Wooden Spoons/76.jpg',
+    category: 'spoons',
+    description: 'A flat-bladed spreader for butter, jam, or soft cheese. Carved from a single piece of maple with a thin flexible blade and a comfortable rounded handle. Small enough to pack in a picnic kit, beautiful enough for your best cheeseboard.',
+    materials: 'Hard maple, food-safe mineral oil',
+    dimensions: '7.5″ total length, 2.25″ blade',
+  },
 ];
 // Prices are in cents (Stripe convention): 6800 = $68.00
 
@@ -359,7 +631,13 @@ const Cart = (() => {
 
     <!-- Right icons -->
     <div class="flex items-center gap-4">
-      <button aria-label="Search" class="p-2 rounded hover:bg-cream-dark transition-colors focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-brand" style="transition: background .2s;">
+      <!-- Hamburger (mobile only) -->
+      <button id="menu-btn" class="md:hidden p-2 rounded hover:bg-cream-dark focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-brand" aria-label="Open menu" aria-expanded="false" style="transition:background .2s;">
+        <svg width="22" height="22" fill="none" stroke="#5B4545" stroke-width="1.8" stroke-linecap="round" viewBox="0 0 24 24">
+          <line x1="3" y1="6" x2="21" y2="6"/><line x1="3" y1="12" x2="21" y2="12"/><line x1="3" y1="18" x2="21" y2="18"/>
+        </svg>
+      </button>
+      <button id="search-btn" aria-label="Search" class="p-2 rounded hover:bg-cream-dark transition-colors focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-brand" style="transition: background .2s;">
         <svg width="20" height="20" fill="none" stroke="#5B4545" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round" viewBox="0 0 24 24"><circle cx="11" cy="11" r="8"/><line x1="21" y1="21" x2="16.65" y2="16.65"/></svg>
       </button>
       <button id="cart-btn" aria-label="Cart" class="relative p-2 rounded hover:bg-cream-dark transition-colors focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-brand">
@@ -369,6 +647,25 @@ const Cart = (() => {
     </div>
   </div>
 </header>
+
+<main id="main-view">
+
+<!-- Mobile Nav Drawer -->
+<div id="mobile-nav" role="dialog" aria-modal="true" aria-label="Site navigation">
+  <div id="mobile-nav-overlay"></div>
+  <nav id="mobile-nav-drawer">
+    <div class="flex items-center justify-between mb-6">
+      <img src="reference/brand_assets/cobble-logo-transparent.png" alt="Cobble" class="h-8 w-auto" />
+      <button id="menu-close-btn" class="p-2 rounded hover:bg-cream-dark focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-brand" aria-label="Close menu" style="transition:background .2s;">
+        <svg width="20" height="20" fill="none" stroke="#5B4545" stroke-width="1.8" stroke-linecap="round" viewBox="0 0 24 24"><line x1="18" y1="6" x2="6" y2="18"/><line x1="6" y1="6" x2="18" y2="18"/></svg>
+      </button>
+    </div>
+    <a href="#shop" onclick="closeMobileNav()">Shop</a>
+    <a href="#collections" onclick="closeMobileNav()">Collections</a>
+    <a href="#about" onclick="closeMobileNav()">Our Craft</a>
+    <a href="#" onclick="closeMobileNav()">Gift Cards</a>
+  </nav>
+</div>
 
 
 <!-- ═══════════════════════════════════════════
@@ -402,10 +699,10 @@ const Cart = (() => {
   <!-- Content -->
   <div class="relative z-10 max-w-7xl mx-auto px-6 md:px-16 flex flex-col items-center justify-center text-center" style="min-height: 86vh; padding-top: 72px; padding-bottom: 72px;">
     <span class="inline-block mb-5 text-xs font-semibold tracking-widest uppercase font-body" style="color: #E3E0AC; letter-spacing: .18em;">Handmade in Canada</span>
-    <h1 class="font-display font-semibold mb-8 mx-auto" style="font-size: clamp(38px,6vw,86px); color: #FFFFFF; letter-spacing: .005em; line-height: .98; max-width: 720px;">
+    <h1 class="font-display font-semibold mb-8 mx-auto" style="font-size: clamp(26px,7vw,86px); color: #FFFFFF; letter-spacing: .005em; line-height: .98; max-width: min(720px,90vw);">
       Art made to live<br/>on your table,<br/>not your shelf.
     </h1>
-    <a href="#shop" class="btn-primary px-7 py-3" style="font-size: 18px; letter-spacing: .025em; width: fit-content; margin: 0 auto;">
+    <a href="#shop" class="btn-primary px-8 py-4" style="font-size: clamp(15px,4vw,18px); letter-spacing: .025em; width: fit-content; margin: 0 auto; max-width: 90vw;">
       Shop the Collection
     </a>
   </div>
@@ -418,7 +715,7 @@ const Cart = (() => {
 <section id="shop" class="pt-20 pb-16 max-w-7xl mx-auto px-6">
   <div class="flex items-end justify-between mb-8">
     <div>
-      <p class="text-xs font-semibold tracking-widest uppercase font-body mb-1" style="color: #7A5E5E; letter-spacing: .16em;">New in</p>
+      <p class="text-xs font-semibold tracking-widest uppercase font-body mb-1" style="color: #7A5E5E; letter-spacing: .16em;">Shop</p>
       <h2 class="font-display font-semibold" style="font-size: clamp(38px, 4vw, 56px); color: #3D2E2E; letter-spacing: 0;">Best Sellers</h2>
     </div>
     <div class="flex gap-2">
@@ -554,8 +851,8 @@ const Cart = (() => {
   <div class="grid grid-cols-1 md:grid-cols-5 gap-3" style="min-height: 600px;">
 
     <!-- Dominant card — Mugs (spans 3 cols) -->
-    <a href="#" class="cat-card cat-hero card-shadow focus-visible:outline-none md:col-span-3" tabindex="0" aria-label="Shop Wooden Mugs">
-      <img src="reference/Products/Wooden Mugs/66.jpg" alt="Wooden Mugs collection" loading="lazy" class="absolute inset-0 w-full h-full object-cover" style="filter: brightness(0.65) saturate(0.85);" />
+    <a href="#category/mugs" class="cat-card cat-hero card-shadow focus-visible:outline-none md:col-span-3" tabindex="0" aria-label="Shop Wooden Mugs">
+      <img src="reference/Products/Wooden Mugs/66.jpg" alt="Wooden Mugs collection" class="absolute inset-0 w-full h-full object-cover" style="filter: brightness(0.65) saturate(0.85);" />
       <div class="absolute inset-0" style="background: rgba(20,14,14,0.25);"></div>
       <div class="absolute inset-0" style="background: linear-gradient(to top, rgba(20,14,14,.9) 0%, rgba(20,14,14,.1) 50%, transparent 100%);"></div>
       <div class="absolute bottom-0 left-0 right-0 p-8">
@@ -564,24 +861,33 @@ const Cart = (() => {
       </div>
     </a>
 
-    <!-- Right column: two stacked cards -->
+    <!-- Right column: three stacked cards -->
     <div class="md:col-span-2 flex flex-col gap-3" style="height: 600px;">
 
-      <a href="#" class="cat-card card-shadow focus-visible:outline-none" tabindex="0" aria-label="Shop Wooden Spoons" style="height: 294px; flex-shrink: 0;">
-        <img src="reference/Products/Wooden Mugs/61.jpg" alt="Wooden Spoons collection" loading="lazy" class="absolute inset-0 w-full h-full object-cover" />
+      <a href="#category/spoons" class="cat-card card-shadow focus-visible:outline-none" tabindex="0" aria-label="Shop Wooden Spoons" style="flex: 1; min-height: 0;">
+        <img src="reference/Products/Wooden Spoons/71.jpg" alt="Wooden Spoons collection" class="absolute inset-0 w-full h-full object-cover" />
         <div class="absolute inset-0" style="background: linear-gradient(to top, rgba(30,20,20,.85) 0%, rgba(30,20,20,.2) 60%, transparent 100%);"></div>
-        <div class="absolute bottom-0 left-0 right-0 p-6">
-          <p class="font-display font-semibold text-white" style="font-size: 34px; letter-spacing: 0; line-height: 1;">Spoons</p>
-          <p class="text-white font-body mt-1" style="opacity: .65; font-size: 12px; text-transform: uppercase; letter-spacing: .12em;">8 products</p>
+        <div class="absolute bottom-0 left-0 right-0 p-4">
+          <p class="font-display font-semibold text-white" style="font-size: 26px; letter-spacing: 0; line-height: 1;">Spoons</p>
+          <p class="text-white font-body mt-1" style="opacity: .65; font-size: 11px; text-transform: uppercase; letter-spacing: .12em;">8 products</p>
         </div>
       </a>
 
-      <a href="#" class="cat-card card-shadow focus-visible:outline-none" tabindex="0" aria-label="Shop Wooden Art" style="height: 294px; flex-shrink: 0;">
-        <img src="reference/Products/Wooden Mugs/63.jpg" alt="Wooden Art collection" loading="lazy" class="absolute inset-0 w-full h-full object-cover" />
+      <a href="#category/art" class="cat-card card-shadow focus-visible:outline-none" tabindex="0" aria-label="Shop Wooden Art" style="flex: 1; min-height: 0;">
+        <img src="reference/Products/Wooden Art/65.jpg" alt="Wooden Art collection" class="absolute inset-0 w-full h-full object-cover" />
         <div class="absolute inset-0" style="background: linear-gradient(to top, rgba(30,20,20,.85) 0%, rgba(30,20,20,.2) 60%, transparent 100%);"></div>
-        <div class="absolute bottom-0 left-0 right-0 p-6">
-          <p class="font-display font-semibold text-white" style="font-size: 34px; letter-spacing: 0; line-height: 1;">Art Pieces</p>
-          <p class="text-white font-body mt-1" style="opacity: .65; font-size: 12px; text-transform: uppercase; letter-spacing: .12em;">1 product</p>
+        <div class="absolute bottom-0 left-0 right-0 p-4">
+          <p class="font-display font-semibold text-white" style="font-size: 26px; letter-spacing: 0; line-height: 1;">Art Pieces</p>
+          <p class="text-white font-body mt-1" style="opacity: .65; font-size: 11px; text-transform: uppercase; letter-spacing: .12em;">1 product</p>
+        </div>
+      </a>
+
+      <a href="#category/trays" class="cat-card card-shadow focus-visible:outline-none" tabindex="0" aria-label="Shop Wooden Trays" style="flex: 1; min-height: 0;">
+        <img src="reference/Products/Wooden Trays/148.jpg" alt="Wooden Trays collection" class="absolute inset-0 w-full h-full object-cover" />
+        <div class="absolute inset-0" style="background: linear-gradient(to top, rgba(30,20,20,.85) 0%, rgba(30,20,20,.2) 60%, transparent 100%);"></div>
+        <div class="absolute bottom-0 left-0 right-0 p-4">
+          <p class="font-display font-semibold text-white" style="font-size: 26px; letter-spacing: 0; line-height: 1;">Trays</p>
+          <p class="text-white font-body mt-1" style="opacity: .65; font-size: 11px; text-transform: uppercase; letter-spacing: .12em;">2 products</p>
         </div>
       </a>
 
@@ -637,7 +943,7 @@ const Cart = (() => {
   <div class="grid grid-cols-2 md:grid-cols-4 gap-5">
 
     <div class="product-card cursor-pointer" data-product-id="birch-mug">
-      <div class="img-wrap"><img src="reference/Products/Wooden Mugs/57.jpg" alt="Birch Mug" loading="lazy" style="height: 280px;" /></div>
+      <div class="img-wrap"><img src="reference/Products/Wooden Mugs/57.jpg" alt="Birch Mug" loading="lazy" /></div>
       <div class="pt-3 pb-5 px-1">
         <div class="flex items-baseline justify-between gap-2">
           <h3 class="font-display font-semibold" style="font-size: 21px; color: #3D2E2E; letter-spacing: 0; line-height: 1.1;">Birch Mug</h3>
@@ -648,7 +954,7 @@ const Cart = (() => {
     </div>
 
     <div class="product-card cursor-pointer" data-product-id="deep-ladle">
-      <div class="img-wrap"><img src="reference/Products/Wooden Spoons/75.jpg" alt="Deep Ladle" loading="lazy" style="height: 280px;" /></div>
+      <div class="img-wrap"><img src="reference/Products/Wooden Spoons/75.jpg" alt="Deep Ladle" loading="lazy" /></div>
       <div class="pt-3 pb-5 px-1">
         <div class="flex items-baseline justify-between gap-2">
           <h3 class="font-display font-semibold" style="font-size: 21px; color: #3D2E2E; letter-spacing: 0; line-height: 1.1;">Deep Ladle</h3>
@@ -659,7 +965,7 @@ const Cart = (() => {
     </div>
 
     <div class="product-card cursor-pointer" data-product-id="ebony-mug">
-      <div class="img-wrap"><img src="reference/Products/Wooden Mugs/58.jpg" alt="Ebony Mug" loading="lazy" style="height: 280px;" /></div>
+      <div class="img-wrap"><img src="reference/Products/Wooden Mugs/58.jpg" alt="Ebony Mug" loading="lazy" /></div>
       <div class="pt-3 pb-5 px-1">
         <div class="flex items-baseline justify-between gap-2">
           <h3 class="font-display font-semibold" style="font-size: 21px; color: #3D2E2E; letter-spacing: 0; line-height: 1.1;">Ebony Mug</h3>
@@ -670,7 +976,7 @@ const Cart = (() => {
     </div>
 
     <div class="product-card cursor-pointer" data-product-id="butter-spreader">
-      <div class="img-wrap"><img src="reference/Products/Wooden Spoons/76.jpg" alt="Butter Spreader" loading="lazy" style="height: 280px;" /></div>
+      <div class="img-wrap"><img src="reference/Products/Wooden Spoons/76.jpg" alt="Butter Spreader" loading="lazy" /></div>
       <div class="pt-3 pb-5 px-1">
         <div class="flex items-baseline justify-between gap-2">
           <h3 class="font-display font-semibold" style="font-size: 21px; color: #3D2E2E; letter-spacing: 0; line-height: 1.1;">Butter Spreader</h3>
@@ -697,6 +1003,7 @@ const Cart = (() => {
     <div class="grid md:grid-cols-3 gap-6">
 
       <div class="review-card p-7">
+        <div aria-hidden="true" class="font-display font-bold mb-1" style="font-size:52px;line-height:.7;color:#D7D0C5;margin-left:-3px;">"</div>
         <div class="stars text-xl mb-4">★★★★★</div>
         <p class="font-body mb-5" style="color: #5B4545; font-size: 16px; line-height: 1.75;">
           "My walnut mug is the most beautiful thing in my kitchen. I get compliments every time someone comes over. Worth every cent."
@@ -711,6 +1018,7 @@ const Cart = (() => {
       </div>
 
       <div class="review-card p-7">
+        <div aria-hidden="true" class="font-display font-bold mb-1" style="font-size:52px;line-height:.7;color:#D7D0C5;margin-left:-3px;">"</div>
         <div class="stars text-xl mb-4">★★★★★</div>
         <p class="font-body mb-5" style="color: #5B4545; font-size: 16px; line-height: 1.75;">
           "Bought three spoon sets as Christmas gifts. Everyone was blown away. The packaging was beautiful and they arrived perfectly wrapped."
@@ -725,7 +1033,8 @@ const Cart = (() => {
       </div>
 
       <div class="review-card p-7">
-        <div class="stars text-xl mb-4">★★★★★</div>
+        <div aria-hidden="true" class="font-display font-bold mb-1" style="font-size:52px;line-height:.7;color:#D7D0C5;margin-left:-3px;">"</div>
+        <div class="stars text-xl mb-4">★★★★<span style="color:#D7D0C5;">★</span></div>
         <p class="font-body mb-5" style="color: #5B4545; font-size: 16px; line-height: 1.75;">
           "I ordered a custom piece and the team was so responsive. They nailed exactly what I had in mind. Will absolutely order again."
         </p>
@@ -761,7 +1070,7 @@ const Cart = (() => {
         class="newsletter-input flex-1 px-5 py-3.5 font-body text-sm"
         aria-label="Email address"
       />
-      <button type="submit" class="btn-primary px-6 py-3.5" style="background: #E3E0AC; color: #3D2E2E; font-size: 18px; white-space: nowrap;">
+      <button type="submit" class="btn-olive px-6 py-3.5" style="font-size: 18px; white-space: nowrap;">
         Subscribe
       </button>
     </form>
@@ -841,6 +1150,37 @@ const Cart = (() => {
     track.scrollBy({ left: 300, behavior: 'smooth' });
   });
 </script>
+
+</main>
+
+<!-- ═══════════════════════════════════════════
+     SEARCH OVERLAY
+═══════════════════════════════════════════ -->
+<div id="search-overlay" class="fixed inset-0 z-[80]" style="display:none; opacity:0; background:rgba(30,20,20,.55); backdrop-filter:blur(4px); transition:opacity .25s ease;" aria-hidden="true">
+  <div id="search-panel" role="dialog" aria-modal="true" aria-label="Search products"
+       class="absolute left-1/2 top-0 w-full"
+       style="max-width:680px; transform:translate(-50%,-100%); background:#FFFFFF; border-radius:0 0 16px 16px; border:1px solid var(--cream-deeper); border-top:none; box-shadow:0 12px 40px rgba(61,46,46,.18), 0 4px 12px rgba(61,46,46,.10); transition:transform .3s cubic-bezier(.25,.46,.45,.94);">
+    <!-- Input row -->
+    <div class="flex items-center gap-3 px-6 py-5 border-b" style="border-color:#D7D0C5;">
+      <svg width="20" height="20" fill="none" stroke="#5B4545" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round" viewBox="0 0 24 24" style="flex-shrink:0;"><circle cx="11" cy="11" r="8"/><line x1="21" y1="21" x2="16.65" y2="16.65"/></svg>
+      <input id="search-input" type="search" placeholder="Search products…" autocomplete="off" spellcheck="false"
+             class="flex-1 bg-transparent outline-none"
+             style="font-family:'Cormorant Garamond',Georgia,serif; font-size:22px; font-weight:500; color:#3D2E2E; border:none; letter-spacing:-.01em;" />
+      <button id="search-close-btn" aria-label="Close search"
+              class="p-2 rounded hover:bg-cream-dark focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-brand"
+              style="transition:background .2s; color:#7A5E5E; font-family:'Inter',sans-serif; font-size:13px; letter-spacing:.04em; flex-shrink:0;">
+        ESC
+      </button>
+    </div>
+    <!-- Results -->
+    <div id="search-results" style="max-height:420px; overflow-y:auto;"></div>
+  </div>
+</div>
+
+<!-- ═══════════════════════════════════════════
+     PRODUCT DETAIL VIEW (rendered by JS router)
+═══════════════════════════════════════════ -->
+<div id="product-view" style="display:none;" aria-live="polite"></div>
 
 
 <!-- ═══════════════════════════════════════════
@@ -999,6 +1339,14 @@ const Cart = (() => {
     }, 1200);
   });
 
+  /* ── Product card click → detail page ── */
+  document.addEventListener('click', e => {
+    if (e.target.closest('.add-to-cart')) return;
+    const card = e.target.closest('.product-card[data-product-id]');
+    if (!card) return;
+    navigateToProduct(card.dataset.productId);
+  });
+
   /* ── Checkout button ── */
   document.getElementById('checkout-btn').addEventListener('click', async () => {
     const btn = document.getElementById('checkout-btn');
@@ -1022,6 +1370,326 @@ const Cart = (() => {
       btn.textContent = 'Checkout';
     }
   });
+</script>
+
+<!-- ═══════════════════════════════════════════
+     JS — Mobile Nav
+═══════════════════════════════════════════ -->
+<script>
+  const menuBtn = document.getElementById('menu-btn');
+  const mobileNav = document.getElementById('mobile-nav');
+  function openMobileNav() {
+    mobileNav.classList.add('is-open');
+    document.body.style.overflow = 'hidden';
+    menuBtn.setAttribute('aria-expanded', 'true');
+    document.getElementById('menu-close-btn').focus();
+  }
+  function closeMobileNav() {
+    mobileNav.classList.remove('is-open');
+    document.body.style.overflow = '';
+    menuBtn.setAttribute('aria-expanded', 'false');
+    menuBtn.focus();
+  }
+  menuBtn.addEventListener('click', openMobileNav);
+  document.getElementById('menu-close-btn').addEventListener('click', closeMobileNav);
+  document.getElementById('mobile-nav-overlay').addEventListener('click', closeMobileNav);
+  document.addEventListener('keydown', e => {
+    if (e.key === 'Escape') {
+      if (mobileNav.classList.contains('is-open')) closeMobileNav();
+      if (document.getElementById('search-overlay').classList.contains('is-open')) closeSearch();
+    }
+  });
+</script>
+
+<!-- ═══════════════════════════════════════════
+     HASH ROUTER — Product Detail Pages
+═══════════════════════════════════════════ -->
+<script>
+  /* ── Search ── */
+  const searchOverlay = document.getElementById('search-overlay');
+  const searchPanel   = document.getElementById('search-panel');
+  const searchInput   = document.getElementById('search-input');
+  const searchResults = document.getElementById('search-results');
+
+  function openSearch() {
+    searchOverlay.style.display = 'block';
+    requestAnimationFrame(() => searchOverlay.classList.add('is-open'));
+    searchInput.value = '';
+    searchResults.innerHTML = '';
+    searchInput.focus();
+    document.body.classList.add('search-open');
+    searchOverlay.setAttribute('aria-hidden', 'false');
+  }
+
+  function closeSearch() {
+    searchOverlay.classList.remove('is-open');
+    document.body.classList.remove('search-open');
+    searchOverlay.setAttribute('aria-hidden', 'true');
+    searchOverlay.addEventListener('transitionend', () => {
+      searchOverlay.style.display = 'none';
+    }, { once: true });
+  }
+
+  searchInput.addEventListener('input', function () {
+    const q = this.value.trim().toLowerCase();
+    if (!q) { searchResults.innerHTML = ''; return; }
+    const matches = PRODUCTS.filter(p =>
+      p.name.toLowerCase().includes(q) ||
+      (p.category && p.category.toLowerCase().includes(q))
+    );
+    if (!matches.length) {
+      searchResults.innerHTML = `<p class="search-empty">No products found for "<em>${this.value}</em>"</p>`;
+      return;
+    }
+    searchResults.innerHTML =
+      `<p class="search-results-label">${matches.length} result${matches.length > 1 ? 's' : ''}</p>` +
+      matches.map(p => `
+        <div class="search-result-item" data-product-id="${p.id}">
+          <img src="${p.img}" alt="${p.name}" />
+          <span class="search-result-name">${p.name}</span>
+          <span class="search-result-price">${fmtProductPrice(p.price)}</span>
+        </div>
+      `).join('');
+  });
+
+  searchResults.addEventListener('click', e => {
+    const item = e.target.closest('.search-result-item');
+    if (!item) return;
+    closeSearch();
+    navigateToProduct(item.dataset.productId);
+  });
+
+  document.getElementById('search-btn').addEventListener('click', openSearch);
+  document.getElementById('search-close-btn').addEventListener('click', closeSearch);
+  searchOverlay.addEventListener('click', e => {
+    if (!searchPanel.contains(e.target)) closeSearch();
+  });
+
+  const CATEGORY_META = {
+    mugs:   { label: 'Wooden Mugs',   img: 'reference/Products/Wooden Mugs/66.jpg' },
+    spoons: { label: 'Wooden Spoons', img: 'reference/Products/Wooden Spoons/71.jpg' },
+    art:    { label: 'Art Pieces',    img: 'reference/Products/Wooden Art/65.jpg' },
+    trays:  { label: 'Wooden Trays',  img: 'reference/Products/Wooden Trays/148.jpg' },
+  };
+
+  function navigateToProduct(id) {
+    window.location.hash = '#product/' + id;
+  }
+
+  function fmtProductPrice(cents) {
+    return '$' + (cents / 100).toFixed(0);
+  }
+
+  function renderCategoryPage(slug) {
+    const pdpView = document.getElementById('product-view');
+    const meta = CATEGORY_META[slug];
+    const products = PRODUCTS.filter(p => p.category === slug);
+    const label = meta ? meta.label : slug.charAt(0).toUpperCase() + slug.slice(1);
+    const heroImg = meta ? meta.img : '';
+
+    const gridHTML = products.length
+      ? products.map(p => `
+          <div class="product-card cursor-pointer" data-product-id="${p.id}">
+            <div class="img-wrap">
+              <img src="${p.img}" alt="${p.name}" loading="lazy" />
+            </div>
+            <div class="pt-3 pb-5 px-1">
+              <div class="flex items-baseline justify-between gap-2">
+                <h3 class="font-display font-semibold"
+                    style="font-size:21px; color:#3D2E2E; letter-spacing:0; line-height:1.1;">
+                  ${p.name}
+                </h3>
+                <span class="font-body font-medium flex-shrink-0"
+                      style="font-size:15px; color:#7A5E5E;">${fmtProductPrice(p.price)}</span>
+              </div>
+              <button class="add-to-cart btn-primary w-full mt-3 py-2"
+                      data-product-id="${p.id}"
+                      style="font-size:14px; letter-spacing:.04em;">Add to Cart</button>
+            </div>
+          </div>
+        `).join('')
+      : `<div class="category-empty" style="grid-column:1/-1;">
+           Coming soon — new pieces in the works.
+         </div>`;
+
+    pdpView.innerHTML = `
+      <div class="max-w-7xl mx-auto px-6">
+
+        <nav class="pdp-breadcrumb" aria-label="Breadcrumb">
+          <a href="#shop">
+            <svg width="14" height="14" fill="none" stroke="currentColor" stroke-width="2"
+                 stroke-linecap="round" stroke-linejoin="round" viewBox="0 0 24 24">
+              <polyline points="15 18 9 12 15 6"/>
+            </svg>
+            Shop
+          </a>
+          <span class="pdp-breadcrumb-sep">›</span>
+          <span style="color:#3D2E2E; font-weight:500;">${label}</span>
+        </nav>
+
+        <div class="category-hero card-shadow">
+          <img src="${heroImg}" alt="${label}" />
+          <div class="category-hero-overlay"></div>
+          <div class="category-hero-text">
+            <p class="font-body" style="font-size:11px; font-weight:600; letter-spacing:.18em; text-transform:uppercase; color:rgba(247,242,235,.7); margin-bottom:8px;">Collection</p>
+            <h1 class="font-display font-semibold"
+                style="font-size:clamp(36px,4vw,64px); color:#fff; letter-spacing:-.01em; line-height:.96;">
+              ${label}
+            </h1>
+            ${products.length ? `<p style="color:rgba(247,242,235,.65); font-family:'Inter',sans-serif; font-size:13px; letter-spacing:.1em; text-transform:uppercase; margin-top:10px;">${products.length} ${products.length === 1 ? 'piece' : 'pieces'}</p>` : ''}
+          </div>
+        </div>
+
+        <div class="category-grid">
+          ${gridHTML}
+        </div>
+
+      </div>
+    `;
+
+    window.scrollTo({ top: 0, behavior: 'instant' });
+  }
+
+  function renderProductDetail(product) {
+    const pdpView = document.getElementById('product-view');
+    const related = PRODUCTS.filter(p => p.id !== product.id).slice(0, 4);
+
+    const relatedHTML = related.map(p => `
+      <div class="product-card flex-none cursor-pointer" data-product-id="${p.id}"
+           style="width:220px; flex-shrink:0;">
+        <div class="img-wrap">
+          <img src="${p.img}" alt="${p.name}" loading="lazy" />
+        </div>
+        <div class="pt-3 pb-5 px-1">
+          <div class="flex items-baseline justify-between gap-2">
+            <h3 class="font-display font-semibold"
+                style="font-size:18px; color:#3D2E2E; letter-spacing:0; line-height:1.15;">
+              ${p.name}
+            </h3>
+            <span class="font-body font-medium flex-shrink-0"
+                  style="font-size:14px; color:#7A5E5E;">${fmtProductPrice(p.price)}</span>
+          </div>
+          <button class="add-to-cart btn-primary w-full mt-3 py-2"
+                  data-product-id="${p.id}"
+                  style="font-size:13px; letter-spacing:.04em;">Add to Cart</button>
+        </div>
+      </div>
+    `).join('');
+
+    pdpView.innerHTML = `
+      <div class="max-w-7xl mx-auto px-6">
+
+        <nav class="pdp-breadcrumb" aria-label="Breadcrumb">
+          <a href="#shop">
+            <svg width="14" height="14" fill="none" stroke="currentColor" stroke-width="2"
+                 stroke-linecap="round" stroke-linejoin="round" viewBox="0 0 24 24">
+              <polyline points="15 18 9 12 15 6"/>
+            </svg>
+            Shop
+          </a>
+          <span class="pdp-breadcrumb-sep">›</span>
+          <span style="color:#3D2E2E; font-weight:500;">${product.name}</span>
+        </nav>
+
+        <div class="pdp-grid">
+          <div class="pdp-img-wrap card-shadow">
+            <img src="${product.img}" alt="${product.name}" />
+          </div>
+
+          <div class="pdp-info">
+            <p class="pdp-category-label">Handmade — Small Batch</p>
+            <h1 class="pdp-name">${product.name}</h1>
+            <p class="pdp-price">${fmtProductPrice(product.price)}</p>
+            <div class="pdp-divider"></div>
+            <p class="pdp-description">${product.description}</p>
+            <div class="pdp-meta">
+              <div class="pdp-meta-row">
+                <span class="pdp-meta-label">Materials</span>
+                <span class="pdp-meta-value">${product.materials}</span>
+              </div>
+              <div class="pdp-meta-row">
+                <span class="pdp-meta-label">Size</span>
+                <span class="pdp-meta-value">${product.dimensions}</span>
+              </div>
+              <div class="pdp-meta-row">
+                <span class="pdp-meta-label">Care</span>
+                <span class="pdp-meta-value">Hand-wash only. Re-oil with mineral oil monthly.</span>
+              </div>
+            </div>
+            <button id="pdp-atc-btn" class="btn-primary pdp-atc-btn"
+                    data-product-id="${product.id}">
+              Add to Cart
+            </button>
+            <p id="pdp-added-msg" class="pdp-added-msg">Added to cart ✓</p>
+          </div>
+        </div>
+
+        <div class="pdp-related">
+          <h2 class="pdp-related-heading">You Might Also Like</h2>
+          <div class="pdp-related-strip">
+            ${relatedHTML}
+          </div>
+        </div>
+
+      </div>
+    `;
+
+    document.getElementById('pdp-atc-btn').addEventListener('click', function() {
+      Cart.add(product.id);
+      const msg = document.getElementById('pdp-added-msg');
+      msg.classList.add('visible');
+      this.textContent = 'Added!';
+      this.disabled = true;
+      this.style.background = '#3D2E2E';
+      setTimeout(() => {
+        msg.classList.remove('visible');
+        this.textContent = 'Add to Cart';
+        this.disabled = false;
+        this.style.background = '';
+      }, 1400);
+    });
+
+    window.scrollTo({ top: 0, behavior: 'instant' });
+  }
+
+  function checkRoute() {
+    const hash = window.location.hash;
+    const mainView = document.getElementById('main-view');
+    const productView = document.getElementById('product-view');
+
+    if (hash.startsWith('#category/')) {
+      const slug = hash.slice('#category/'.length);
+      mainView.style.display = 'none';
+      productView.style.display = 'block';
+      renderCategoryPage(slug);
+    } else if (hash.startsWith('#product/')) {
+      const id = hash.slice('#product/'.length);
+      const product = PRODUCTS.find(p => p.id === id);
+      if (product) {
+        mainView.style.display = 'none';
+        productView.style.display = 'block';
+        renderProductDetail(product);
+      } else {
+        mainView.style.display = '';
+        productView.style.display = 'none';
+        productView.innerHTML = '';
+      }
+    } else {
+      mainView.style.display = '';
+      productView.style.display = 'none';
+      productView.innerHTML = '';
+      // Scroll to the target section after restoring visibility
+      if (hash && hash !== '#') {
+        requestAnimationFrame(() => {
+          const target = document.querySelector(hash);
+          if (target) target.scrollIntoView({ behavior: 'smooth' });
+        });
+      }
+    }
+  }
+
+  window.addEventListener('hashchange', checkRoute);
+  document.addEventListener('DOMContentLoaded', checkRoute);
 </script>
 
 </body>
